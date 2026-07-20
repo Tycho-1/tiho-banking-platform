@@ -1,0 +1,58 @@
+name: ledger-db
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/ledger/ledger-db/**'
+      - '.github/workflows/ledger-db.yml'
+  pull_request:
+    paths:
+      - 'src/ledger/ledger-db/**'
+      - '.github/workflows/ledger-db.yml'
+
+concurrency:
+  group: ledger-db-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SERVICE_NAME: ledger-db
+  SERVICE_PATH: src/ledger/ledger-db
+  IMAGE: ghcr.io/${{ github.repository }}/ledger-db
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: false
+          tags: ${{ env.SERVICE_NAME }}:ci
+
+  publish:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ENABLE_IMAGE_PUSH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest

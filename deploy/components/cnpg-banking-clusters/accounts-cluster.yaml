@@ -1,0 +1,22 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: banking-accounts
+  namespace: cnpg-banking
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  bootstrap:
+    initdb:
+      database: accounts-db
+      owner: accounts-admin
+      secret:
+        name: banking-accounts-credentials
+      postInitApplicationSQLRefs:
+        configMapRefs:
+          - name: banking-accounts-init-sql
+            key: schema.sql
+          - name: banking-accounts-init-sql
+            key: testdata.sql
+  storage:
+    size: 1Gi

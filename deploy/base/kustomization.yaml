@@ -1,0 +1,16 @@
+# Portable application manifests (from upstream kubernetes-manifests/).
+# Environment-specific settings live in deploy/overlays/* — not here.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - config.yaml
+  - accounts-db.yaml
+  - ledger-db.yaml
+  - userservice.yaml
+  - contacts.yaml
+  - frontend.yaml
+  - balance-reader.yaml
+  - ledger-writer.yaml
+  - transaction-history.yaml
+  - loadgenerator.yaml

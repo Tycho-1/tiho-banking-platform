@@ -1,0 +1,45 @@
+Tiho Banking Platform
+Copyright 2026
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+================================================================================
+
+This product includes software derived from Bank of Anthos.
+
+  Bank of Anthos
+  Copyright 2020 Google LLC
+
+  Source: https://github.com/GoogleCloudPlatform/bank-of-anthos
+  Upstream tag: v0.6.9 (last manual sync: 2026-07-06)
+  License: Apache License, Version 2.0
+
+Derived portions include, without limitation:
+
+  - src/          — microservice application code
+  - deploy/base/  — Kubernetes manifests (from upstream kubernetes-manifests/)
+
+Original work in this repository (also under Apache-2.0) includes, without
+limitation:
+
+  - deploy/overlays/     — Kind, Istio ambient, Gateway API, CNPG overlays
+  - deploy/components/   — Kustomize components (JWT, CNPG, ingress, …)
+  - docs/                — architecture and deployment documentation
+  - .github/workflows/   — CI validation
+
+Screenshots in docs/img/ (login.png, transactions.png, architecture.png) are
+copied from Bank of Anthos and remain under Apache-2.0.
+
+Container images referenced in manifests may be pulled from the upstream
+Google Artifact Registry (bank-of-anthos-ci) unless replaced by your own
+registry.

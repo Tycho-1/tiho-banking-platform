@@ -1,0 +1,40 @@
+# Validate all Kustomize overlays (no cluster required).
+name: Deploy validate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'deploy/**'
+      - '.github/workflows/deploy-validate.yml'
+  pull_request:
+    paths:
+      - 'deploy/**'
+      - '.github/workflows/deploy-validate.yml'
+
+concurrency:
+  group: deploy-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kustomize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Build overlays
+        run: |
+          set -euo pipefail
+          for overlay in \
+            deploy/overlays/kind-local \
+            deploy/overlays/kind-local-gateway-api \
+            deploy/overlays/kind-local-ambient \
+            deploy/overlays/kind-local-ambient-cnpg \
+            deploy/overlays/gke-dev
+          do
+            echo "==> kustomize ${overlay}"
+            kubectl kustomize "${overlay}" > /dev/null
+          done

@@ -1,0 +1,27 @@
+# Dedicated CNPG clusters for Bank of Anthos (accounts + ledger).
+# Omit this component when pointing at an existing cluster — edit cnpg-connection-targets only.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - namespace.yaml
+  - credentials-secrets.yaml
+  - accounts-cluster.yaml
+  - ledger-cluster.yaml
+  - accounts-seed-job.yaml
+  - ledger-seed-job.yaml
+
+configMapGenerator:
+  - name: banking-accounts-init-sql
+    namespace: cnpg-banking
+    files:
+      - schema.sql=init-sql/accounts-schema.sql
+      - testdata.sql=init-sql/accounts-testdata.sql
+  - name: banking-ledger-init-sql
+    namespace: cnpg-banking
+    files:
+      - schema.sql=init-sql/ledger-schema.sql
+      - ledger-create-transactions.sh=init-sql/ledger-create-transactions.sh
+
+generatorOptions:
+  disableNameSuffixHash: true

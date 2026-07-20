@@ -1,0 +1,9 @@
+# Kind + Istio ambient (ztunnel). Sidecar overlay remains the default (kind-local).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../kind-local
+
+components:
+  - ../../components/istio-ambient-mesh

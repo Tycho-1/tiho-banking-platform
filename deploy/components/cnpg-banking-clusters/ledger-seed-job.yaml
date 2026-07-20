@@ -1,0 +1,57 @@
+# Idempotent demo ledger seed — mirrors embedded ledger-db USE_DEMO_DATA init script.
+# Re-run: kubectl delete job banking-ledger-seed -n cnpg-banking && kubectl apply -k deploy/overlays/kind-local-ambient-cnpg
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: banking-ledger-seed
+  namespace: cnpg-banking
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 12
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-postgres
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h banking-ledger-rw -p 5432; do
+                echo "waiting for banking-ledger-rw..."
+                sleep 3
+              done
+      containers:
+        - name: seed
+          # Debian image — ledger script needs bash, date, and shuf (not in alpine).
+          image: postgres:16
+          env:
+            - name: PGHOST
+              value: banking-ledger-rw
+            - name: POSTGRES_DB
+              value: postgresdb
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: banking-ledger-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: banking-ledger-credentials
+                  key: password
+            - name: LOCAL_ROUTING_NUM
+              value: "883745000"
+          command:
+            - bash
+            - /scripts/ledger-create-transactions.sh
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+      volumes:
+        - name: scripts
+          configMap:
+            name: banking-ledger-init-sql
+            defaultMode: 0555

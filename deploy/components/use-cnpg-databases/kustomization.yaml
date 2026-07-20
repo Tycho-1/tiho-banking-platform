@@ -1,0 +1,12 @@
+# Point app ConfigMaps at CNPG instead of embedded StatefulSet databases.
+# Requires cnpg-connection-targets ConfigMap in the overlay (see README).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - path: patch-accounts-db-config.yaml
+  - path: patch-ledger-db-config.yaml
+  - path: delete-accounts-db-statefulset.yaml
+  - path: delete-ledger-db-statefulset.yaml
+  - path: delete-accounts-db-service.yaml
+  - path: delete-ledger-db-service.yaml

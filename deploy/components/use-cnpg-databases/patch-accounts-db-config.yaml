@@ -1,0 +1,9 @@
+# Non-sensitive fields only. Passwords/URIs come from overlay Secret
+# cnpg-connection-secrets via replacements into accounts-db-secrets.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounts-db-config
+data:
+  POSTGRES_DB: accounts-db
+  POSTGRES_USER: accounts-admin

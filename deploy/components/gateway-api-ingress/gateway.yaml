@@ -1,0 +1,17 @@
+# North-south entry using Kubernetes Gateway API.
+# Istio implements this via GatewayClass `istio` (creates/manages gateway pods + LB Service).
+# Docs: https://gateway-api.sigs.k8s.io/docs/introduction/
+# Istio guide: https://istio.io/latest/docs/tasks/traffic-management/ingress/gateway-api/
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: banking-platform
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same

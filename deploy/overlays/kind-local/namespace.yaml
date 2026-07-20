@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: banking-platform
+  labels:
+    # Sidecar mesh (default). For ambient use overlay kind-local-ambient instead.
+    istio-injection: enabled

@@ -1,0 +1,10 @@
+# Expose frontend via Kubernetes Gateway API (Gateway + HTTPRoute).
+# Spec: https://gateway-api.sigs.k8s.io/docs/introduction/
+# Implementation on this Kind cluster: GatewayClass `istio` (Istio controller).
+# Does NOT use classic networking.istio.io Gateway / VirtualService.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - gateway.yaml
+  - httproute.yaml

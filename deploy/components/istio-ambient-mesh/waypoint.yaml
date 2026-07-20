@@ -1,0 +1,14 @@
+# L7 waypoint for VirtualService / HTTP routing in ambient mode.
+# Requires Gateway API CRDs (from the Kind/platform Istio or Gateway API install).
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: waypoint
+  labels:
+    istio.io/waypoint-for: service
+spec:
+  gatewayClassName: istio-waypoint
+  listeners:
+    - name: mesh
+      port: 15008
+      protocol: HBONE

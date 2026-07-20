@@ -1,0 +1,66 @@
+name: loadgenerator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/loadgenerator/**'
+      - '.github/workflows/loadgenerator.yml'
+  pull_request:
+    paths:
+      - 'src/loadgenerator/**'
+      - '.github/workflows/loadgenerator.yml'
+
+concurrency:
+  group: loadgenerator-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SERVICE_NAME: loadgenerator
+  SERVICE_PATH: src/loadgenerator
+  IMAGE: ghcr.io/${{ github.repository }}/loadgenerator
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.14'
+
+      - name: Sync dependencies
+        run: uv sync
+        working-directory: ${{ env.SERVICE_PATH }}
+
+      - name: Docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: false
+          tags: ${{ env.SERVICE_NAME }}:ci
+
+  publish:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ENABLE_IMAGE_PUSH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest

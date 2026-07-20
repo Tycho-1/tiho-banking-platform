@@ -1,0 +1,11 @@
+# Non-GKE clusters: disable Cloud Operations export (see upstream docs/environments.md).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - path: patch-frontend.yaml
+  - path: patch-userservice.yaml
+  - path: patch-contacts.yaml
+  - path: patch-balancereader.yaml
+  - path: patch-ledgerwriter.yaml
+  - path: patch-transactionhistory.yaml

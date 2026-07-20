@@ -1,0 +1,32 @@
+# Istio ingress — matches Helm `istio/gateway` in namespace `istio-ingress` (selector `istio: ingress`, listener 80).
+# Swap for gateway-istioctl.yaml if you use classic istioctl ingressgateway in istio-system.
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: banking-platform-gateway
+spec:
+  selector:
+    istio: ingress
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: banking-platform-frontend
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - banking-platform-gateway
+  http:
+    - route:
+        - destination:
+            host: frontend
+            port:
+              number: 80

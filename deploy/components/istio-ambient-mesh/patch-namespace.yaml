@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: banking-platform
+  labels:
+    istio-injection: null
+    istio.io/dataplane-mode: ambient
+    istio.io/use-waypoint: waypoint

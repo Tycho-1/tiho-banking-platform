@@ -1,0 +1,38 @@
+# Kind + Kubernetes Gateway API ingress (replaces Istio Gateway / VirtualService).
+# Still uses Istio as the GatewayClass implementation — portable API, mesh-capable cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: banking-platform
+
+resources:
+  - namespace.yaml
+  - ../../base
+
+components:
+  - ../../components/demo-jwt
+  - ../../components/disable-gcp-telemetry
+  - ../../components/strip-gke-workload-identity
+  - ../../components/frontend-clusterip
+  - ../../components/gateway-api-ingress
+
+# Pin image tags in one place for GitOps promotion (CI updates newTag per service).
+images:
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/accounts-db
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledger-db
+    newTag: v0.6.9
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator
+    newTag: v0.6.9

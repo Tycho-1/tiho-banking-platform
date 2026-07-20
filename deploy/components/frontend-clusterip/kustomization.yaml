@@ -1,0 +1,6 @@
+# Route ingress through Istio Gateway instead of a cloud LoadBalancer on the frontend Service.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - path: patch-frontend-service.yaml

@@ -1,0 +1,63 @@
+# Kind + Istio ambient + CloudNativePG (replaces embedded Postgres StatefulSets).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../kind-local-ambient
+  - cnpg-connection-targets.yaml
+
+components:
+  - ../../components/use-cnpg-databases
+  - ../../components/cnpg-banking-clusters
+
+replacements:
+  - source:
+      kind: Secret
+      name: cnpg-connection-secrets
+      fieldPath: stringData.ACCOUNTS_DB_URI
+    targets:
+      - select:
+          kind: Secret
+          name: accounts-db-secrets
+        fieldPaths:
+          - stringData.ACCOUNTS_DB_URI
+  - source:
+      kind: Secret
+      name: cnpg-connection-secrets
+      fieldPath: stringData.POSTGRES_PASSWORD
+    targets:
+      - select:
+          kind: Secret
+          name: accounts-db-secrets
+        fieldPaths:
+          - stringData.POSTGRES_PASSWORD
+  - source:
+      kind: ConfigMap
+      name: cnpg-connection-targets
+      fieldPath: data.SPRING_DATASOURCE_URL
+    targets:
+      - select:
+          kind: ConfigMap
+          name: ledger-db-config
+        fieldPaths:
+          - data.SPRING_DATASOURCE_URL
+  - source:
+      kind: Secret
+      name: cnpg-connection-secrets
+      fieldPath: stringData.SPRING_DATASOURCE_PASSWORD
+    targets:
+      - select:
+          kind: Secret
+          name: ledger-db-secrets
+        fieldPaths:
+          - stringData.SPRING_DATASOURCE_PASSWORD
+  - source:
+      kind: Secret
+      name: cnpg-connection-secrets
+      fieldPath: stringData.POSTGRES_PASSWORD_LEDGER
+    targets:
+      - select:
+          kind: Secret
+          name: ledger-db-secrets
+        fieldPaths:
+          - stringData.POSTGRES_PASSWORD

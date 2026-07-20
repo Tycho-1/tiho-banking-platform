@@ -1,0 +1,9 @@
+# Ambient mesh: namespace labels + L7 waypoint (Gateway API). Cluster must run Istio ambient only.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - waypoint.yaml
+
+patches:
+  - path: patch-namespace.yaml

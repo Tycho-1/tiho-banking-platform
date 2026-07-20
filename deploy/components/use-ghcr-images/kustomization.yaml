@@ -1,0 +1,44 @@
+# Remap Bank of Anthos upstream images → this repo’s GHCR images (CI publish).
+# Opt in from any overlay:
+#
+#   components:
+#     - ../../components/use-ghcr-images
+#
+# Prerequisites: ENABLE_IMAGE_PUSH=true so CI pushed images; Kind/GKE can pull from ghcr.io
+# (public package, or imagePullSecret for private).
+#
+# After opt-in, promote tags here (or add overlay `images:` matching the newName):
+#   newTag: <git-sha> | latest | v1.2.3
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+# GHCR requires lowercase. Matches:
+#   ghcr.io/${{ github.repository }}/<service>  with repository tycho-1/tiho-banking-platform
+images:
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
+    newName: ghcr.io/tycho-1/tiho-banking-platform/frontend
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice
+    newName: ghcr.io/tycho-1/tiho-banking-platform/userservice
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts
+    newName: ghcr.io/tycho-1/tiho-banking-platform/contacts
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader
+    newName: ghcr.io/tycho-1/tiho-banking-platform/balancereader
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter
+    newName: ghcr.io/tycho-1/tiho-banking-platform/ledgerwriter
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/transactionhistory
+    newName: ghcr.io/tycho-1/tiho-banking-platform/transactionhistory
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/accounts-db
+    newName: ghcr.io/tycho-1/tiho-banking-platform/accounts-db
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledger-db
+    newName: ghcr.io/tycho-1/tiho-banking-platform/ledger-db
+    newTag: latest
+  - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator
+    newName: ghcr.io/tycho-1/tiho-banking-platform/loadgenerator
+    newTag: latest

@@ -1,0 +1,22 @@
+# Single place to configure CNPG endpoints.
+# Non-sensitive hosts/URLs → ConfigMap; passwords/URIs-with-password → Secret.
+# CNPG read-write DNS: <cluster-name>-rw.<namespace>.svc.cluster.local
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cnpg-connection-targets
+data:
+  # Non-secret connection fields (host/db only)
+  SPRING_DATASOURCE_URL: jdbc:postgresql://banking-ledger-rw.cnpg-banking.svc.cluster.local:5432/postgresdb
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cnpg-connection-secrets
+type: Opaque
+stringData:
+  # Demo values in git for easy apply — replace with ESO later
+  ACCOUNTS_DB_URI: postgresql://accounts-admin:demo-password-change-me@banking-accounts-rw.cnpg-banking.svc.cluster.local:5432/accounts-db
+  POSTGRES_PASSWORD: demo-password-change-me
+  SPRING_DATASOURCE_PASSWORD: demo-password-change-me
+  POSTGRES_PASSWORD_LEDGER: demo-password-change-me
