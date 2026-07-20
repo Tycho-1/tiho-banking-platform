@@ -74,5 +74,5 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-# Parent dir so `from contacts.contacts import ...` resolves (package lives in this folder).
-pythonpath = [".."]
+# "." so `from db import …` works; ".." so `from contacts.contacts import …` works.
+pythonpath = [".", ".."]

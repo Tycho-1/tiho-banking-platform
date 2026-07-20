@@ -65,13 +65,14 @@ Push jobs run only when **all** of:
 2. Add variable: `ENABLE_IMAGE_PUSH` = `true`
 3. Prefer **Settings → Actions → General → Workflow permissions** = Read (publish jobs already set `packages: write`)
 
-Images push to:
+Images push to (owner/repo lowercased for GHCR):
 
 ```text
-ghcr.io/<owner>/tiho-banking-platform/<service>:v<release.yaml-version>
-ghcr.io/<owner>/tiho-banking-platform/<service>:<git-sha>
+ghcr.io/tycho-1/tiho-banking-platform/<service>:v<release.yaml-version>
+ghcr.io/tycho-1/tiho-banking-platform/<service>:<git-sha>
 ```
 
+Workflows set `IMAGE` with `tr '[:upper:]' '[:lower:]'` because `github.repository` keeps the GitHub username casing (`Tycho-1`) and GHCR rejects uppercase.
 See [deploy/components/use-ghcr-images/README.md](../../deploy/components/use-ghcr-images/README.md). Pin `newTag` per service to match that service’s `release.yaml`.
 
 ### GCP Artifact Registry (later)

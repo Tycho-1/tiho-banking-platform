@@ -18,7 +18,6 @@ concurrency:
 env:
   SERVICE_NAME: loadgenerator
   SERVICE_PATH: src/loadgenerator
-  IMAGE: ghcr.io/${{ github.repository }}/loadgenerator
 
 jobs:
   ci:
@@ -50,6 +49,9 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/${{ env.SERVICE_NAME }}" >> "$GITHUB_ENV"
 
       - name: Read semver from release.yaml
         id: version
