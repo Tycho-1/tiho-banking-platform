@@ -88,7 +88,8 @@
     object-fit: contain; */
   }
   .navbar-top {
-    background-color: white;
+    /* Tiho fork: light-blue top bar (distinct from upstream white) */
+    background-color: #add8e6;
     min-height: 80px;
     color: white;
     position: relative;

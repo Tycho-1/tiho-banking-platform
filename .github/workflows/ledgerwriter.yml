@@ -51,6 +51,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read semver from release.yaml
+        id: version
+        working-directory: ${{ env.SERVICE_PATH }}
+        run: |
+          version=$(sed -n 's/^version:[[:space:]]*"\?\([^"#]*\)"\?.*/\1/p' release.yaml | tr -d '[:space:]')
+          if [ -z "$version" ]; then
+            echo "Missing or empty version in release.yaml" >&2
+            exit 1
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -64,5 +75,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image (Jib)
-        run: mvn -B compile jib:build -Djib.to.image=${{ env.IMAGE }}:${{ github.sha }} -Djib.to.tags=latest
+        run: >
+          mvn -B compile jib:build
+          -Djib.to.image=${{ env.IMAGE }}:${{ steps.version.outputs.tag }}
+          -Djib.to.tags=${{ github.sha }}
         working-directory: ${{ env.SERVICE_PATH }}

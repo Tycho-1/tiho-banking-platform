@@ -44,6 +44,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read semver from release.yaml
+        id: version
+        working-directory: ${{ env.SERVICE_PATH }}
+        run: |
+          version=$(sed -n 's/^version:[[:space:]]*"\?\([^"#]*\)"\?.*/\1/p' release.yaml | tr -d '[:space:]')
+          if [ -z "$version" ]; then
+            echo "Missing or empty version in release.yaml" >&2
+            exit 1
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -55,5 +66,5 @@ jobs:
           context: ${{ env.SERVICE_PATH }}
           push: true
           tags: |
+            ${{ env.IMAGE }}:${{ steps.version.outputs.tag }}
             ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:latest

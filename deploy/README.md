@@ -71,7 +71,7 @@ components:
   - ../../components/use-ghcr-images
 ```
 
-That remaps `us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/<service>` → `ghcr.io/tycho-1/tiho-banking-platform/<service>:latest`. Change `newTag` there (or in the overlay) to pin a git SHA.
+That remaps each service to `ghcr.io/tycho-1/tiho-banking-platform/<service>:v…` using **per-service** tags from `src/.../release.yaml` (e.g. frontend `v0.6.10`, others `v0.6.9`). Only enable after those images exist on GHCR; or pin a single service in the overlay `images:`.
 
 ## Secrets (demo in git, correct K8s types)
 
