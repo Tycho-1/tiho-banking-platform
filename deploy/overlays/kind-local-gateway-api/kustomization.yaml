@@ -15,6 +15,7 @@ components:
   - ../../components/strip-gke-workload-identity
   - ../../components/frontend-clusterip
   - ../../components/gateway-api-ingress
+  - ../../components/use-ghcr-images
 
 # Pin image tags in one place for GitOps promotion (CI updates newTag per service).
 images:

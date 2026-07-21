@@ -63,14 +63,15 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 
 | Overlay | Default image source |
 |---------|---------------------|
-| **`kind-local`** | **GHCR** — `ghcr.io/tycho-1/tiho-banking-platform/<service>` (component `use-ghcr-images` in overlay) |
-| **`kind-local-gateway-api`**, **`kind-local-ambient`**, **`kind-local-ambient-cnpg`**, **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
+| **`kind-local`**, **`kind-local-gateway-api`** | **GHCR** — `ghcr.io/tycho-1/tiho-banking-platform/<service>` (component `use-ghcr-images` in overlay) |
+| **`kind-local-ambient`**, **`kind-local-ambient-cnpg`** | **GHCR** — inherits `use-ghcr-images` from [`kind-local`](overlays/kind-local/kustomization.yaml) |
+| **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
 
 Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.10`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
 
-### Use upstream BoA images on `kind-local`
+### Use upstream BoA images on Kind overlays
 
-Remove **`use-ghcr-images`** from `components:` in [overlays/kind-local/kustomization.yaml](overlays/kind-local/kustomization.yaml). The overlay `images:` block then pins upstream tags:
+Remove **`use-ghcr-images`** from `components:` in [overlays/kind-local/kustomization.yaml](overlays/kind-local/kustomization.yaml) and/or [overlays/kind-local-gateway-api/kustomization.yaml](overlays/kind-local-gateway-api/kustomization.yaml). The overlay `images:` block then pins upstream tags:
 
 ```text
 us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/<service>:v0.6.9

@@ -1,6 +1,6 @@
 # Kind local — Istio ambient
 
-Same app stack as [`kind-local`](../kind-local/) (upstream images, portable components, Istio ingress gateway), but joins an **ambient** mesh instead of sidecar injection.
+Same app stack as [`kind-local`](../kind-local/) (GHCR images via inherited `use-ghcr-images`, portable components, Istio ingress gateway), but joins an **ambient** mesh instead of sidecar injection.
 
 | Piece | Location |
 |-------|----------|

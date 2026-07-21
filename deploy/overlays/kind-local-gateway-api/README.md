@@ -7,7 +7,7 @@ Bank of Anthos on Kind using **[Kubernetes Gateway API](https://gateway-api.sigs
 | Namespace `banking-platform` | `namespace.yaml` (`istio-injection: enabled`) |
 | Demo JWT | `deploy/components/demo-jwt/` |
 | **Gateway + HTTPRoute** | `deploy/components/gateway-api-ingress/` |
-| Image tags | `kustomization.yaml` → `images:` |
+| **Container images** | component `use-ghcr-images` → `ghcr.io/tycho-1/tiho-banking-platform/<service>` (same as [`kind-local`](../kind-local/)) |
 | GCP telemetry off | `disable-gcp-telemetry` |
 | Frontend ClusterIP | `frontend-clusterip` |
 
@@ -52,6 +52,10 @@ curl -sS -o /dev/null -w "%{http_code}\n" http://<EXTERNAL-IP>/
 ```
 
 Open `http://<EXTERNAL-IP>/` in a browser. Demo login: `testuser` / `bankofanthos`.
+
+## Upstream BoA images instead of GHCR
+
+Remove `use-ghcr-images` from `components:` in `kustomization.yaml`. The overlay `images:` block then pins upstream tags (same pattern as [`kind-local`](../kind-local/README.md)).
 
 Optional hostname later: set `spec.listeners[].hostname` / `HTTPRoute` `hostnames` and point DNS at the LB IP (TLS via cert-manager when ready).
 

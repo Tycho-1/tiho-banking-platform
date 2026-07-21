@@ -2,7 +2,7 @@
 
 Optional Kustomize component. Remaps upstream BoA image names to this repo’s **GHCR** images (built by CI).
 
-**Enabled by default** on overlay **`kind-local`**. Other overlays still use upstream Google Artifact Registry unless you add this component.
+**Enabled by default** on overlays **`kind-local`** and **`kind-local-gateway-api`**. **`kind-local-ambient`** / **`kind-local-ambient-cnpg`** inherit GHCR via `resources: ../kind-local`. **`gke-dev`** still uses upstream unless you add this component.
 
 ## What it does
 
