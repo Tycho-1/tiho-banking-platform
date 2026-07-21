@@ -1,6 +1,8 @@
 # Use GHCR images (self-built)
 
-Optional Kustomize component. Default overlays keep **upstream** Bank of Anthos images so demos work without CI push.
+Optional Kustomize component. Remaps upstream BoA image names to this repo’s **GHCR** images (built by CI).
+
+**Enabled by default** on overlay **`kind-local`**. Other overlays still use upstream Google Artifact Registry unless you add this component.
 
 ## What it does
 
@@ -12,7 +14,11 @@ userservice     → …/userservice:v0.6.9
 …
 ```
 
-Only opt in for services you have actually published to GHCR. Until then, leave this component off (or override a single image in the overlay).
+Only remap services you have actually published to GHCR when adding this component to **other** overlays. On **`kind-local`**, all nine app images are expected on GHCR after CI.
+
+## Default on `kind-local`
+
+Already listed in [overlays/kind-local/kustomization.yaml](../../overlays/kind-local/kustomization.yaml). To switch back to **upstream** BoA images, remove this component from that overlay — see [overlays/kind-local/README.md](../../overlays/kind-local/README.md).
 
 ## Per-service versioning
 
@@ -27,11 +33,11 @@ CI reads `$SERVICE_PATH/release.yaml` and pushes `v$(version)` (+ git SHA). Bump
 
 Keep `newTag` in this file in sync with each service’s `release.yaml` when you promote.
 
-## Opt in
+## Enable on other overlays
 
 1. Bump `version` in the service’s `release.yaml`, enable `ENABLE_IMAGE_PUSH=true`, push to `main` under that service path.
 2. Set matching `newTag` here for that service.
-3. Add the component (or pin only one image in the overlay):
+3. Add the component to the overlay:
 
 ```yaml
 components:

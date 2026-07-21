@@ -1,4 +1,4 @@
-# Kind cluster overlay — upstream images, demo JWT, Istio ingress (Helm gateway layout).
+# Kind cluster overlay — GHCR images (CI), demo JWT, Istio ingress (Helm gateway layout).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -14,6 +14,7 @@ components:
   - ../../components/disable-gcp-telemetry
   - ../../components/strip-gke-workload-identity
   - ../../components/frontend-clusterip
+  - ../../components/use-ghcr-images
 
 # Pin image tags in one place for GitOps promotion (CI updates newTag per service).
 images:

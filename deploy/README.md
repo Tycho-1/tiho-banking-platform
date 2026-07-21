@@ -16,7 +16,7 @@ deploy/
 │   ├── gateway-api-ingress/ # Gateway API Gateway + HTTPRoute (kind-local-gateway-api)
 │   ├── use-cnpg-databases/  # Point apps at CNPG; drop embedded StatefulSets
 │   ├── cnpg-banking-clusters/  # Optional dedicated CNPG Cluster CRs
-│   └── use-ghcr-images/     # Optional: remap to self-built GHCR images (CI)
+│   └── use-ghcr-images/     # Remap base images → GHCR (enabled on kind-local)
 └── overlays/
     ├── kind-local/          # Local Kind — Istio sidecar + Istio Gateway/VS
     ├── kind-local-gateway-api/  # Kind — sidecar + Kubernetes Gateway API ingress
@@ -47,7 +47,7 @@ Same **`base/`** for all — no contradiction. **`gke-dev`** is what Bank of Ant
 
 Overlays assume a **Kubernetes cluster you create** (typically Kind). This app repo does **not** install the cluster or mesh/operators. Document prerequisites per overlay; a public Kind/platform reference can be linked later ([docs/TODO.md](../docs/TODO.md)).
 
-**Kind (sidecar + classic Istio ingress):** Kind + **Istio sidecar** + an ingress gateway Service (e.g. Helm `istio-ingress` + MetalLB), pull access to upstream BoA images — overlay **`kind-local`**.
+**Kind (sidecar + classic Istio ingress):** Kind + **Istio sidecar** + an ingress gateway Service (e.g. Helm `istio-ingress` + MetalLB). Overlay **`kind-local`** pulls **GHCR** images by default (`use-ghcr-images`); packages must be public or use an `imagePullSecret`.
 
 **Kind (Gateway API ingress):** Kind + **Gateway API CRDs** + a `GatewayClass` (today often `istio` if Istio is installed). Overlay **`kind-local-gateway-api`** — [README](overlays/kind-local-gateway-api/README.md). Uses Kubernetes `Gateway` + `HTTPRoute` instead of Istio `VirtualService`. Later, point `gatewayClassName` at a non-Istio controller if you install one on the cluster.
 
@@ -59,19 +59,35 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 
 **Later:** `eks-dev`, `aks-dev` — same pattern as `gke-dev` / `kind-local`.
 
-## Self-built images (optional)
+## Container images
 
-Overlays default to **upstream** Bank of Anthos images. To run images published by this repo’s CI (GHCR):
+| Overlay | Default image source |
+|---------|---------------------|
+| **`kind-local`** | **GHCR** — `ghcr.io/tycho-1/tiho-banking-platform/<service>` (component `use-ghcr-images` in overlay) |
+| **`kind-local-gateway-api`**, **`kind-local-ambient`**, **`kind-local-ambient-cnpg`**, **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
 
-1. Set repo variable **`ENABLE_IMAGE_PUSH=true`** and push to `main` (see [`.github/workflows/README.md`](../.github/workflows/README.md)).
-2. Add component **`use-ghcr-images`** to the overlay you deploy — [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
+Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.10`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
+
+### Use upstream BoA images on `kind-local`
+
+Remove **`use-ghcr-images`** from `components:` in [overlays/kind-local/kustomization.yaml](overlays/kind-local/kustomization.yaml). The overlay `images:` block then pins upstream tags:
+
+```text
+us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/<service>:v0.6.9
+```
+
+No GHCR packages required — good for a fresh clone without CI.
+
+### Enable GHCR on other overlays
+
+Add the component to the overlay you deploy:
 
 ```yaml
 components:
   - ../../components/use-ghcr-images
 ```
 
-That remaps each service to `ghcr.io/tycho-1/tiho-banking-platform/<service>:v…` using **per-service** tags from `src/.../release.yaml` (e.g. frontend `v0.6.10`, others `v0.6.9`). Only enable after those images exist on GHCR; or pin a single service in the overlay `images:`.
+Pin tags in [components/use-ghcr-images/kustomization.yaml](components/use-ghcr-images/kustomization.yaml) to match each `release.yaml`.
 
 ## Secrets (demo in git, correct K8s types)
 
