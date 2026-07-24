@@ -1,0 +1,14 @@
+# Kind + ambient + CNPG + ESO/Vault.
+# SecretStore + auth come from the platform repo (not this component).
+#
+# Inherits kind-local-ambient-cnpg, then replaces git-backed Secrets with ExternalSecrets.
+# Do not set `namespace:` here — CNPG resources live in cnpg-banking; ESO CRs set ns explicitly.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../kind-local-ambient-cnpg
+
+components:
+  - ../../components/use-eso-vault
+  - ../../components/use-eso-vault-cnpg

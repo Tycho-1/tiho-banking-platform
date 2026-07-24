@@ -16,12 +16,16 @@ deploy/
 │   ├── gateway-api-ingress/ # Gateway API Gateway + HTTPRoute (kind-local-gateway-api)
 │   ├── use-cnpg-databases/  # Point apps at CNPG; drop embedded StatefulSets
 │   ├── cnpg-banking-clusters/  # Optional dedicated CNPG Cluster CRs
-│   └── use-ghcr-images/     # Remap base images → GHCR (enabled on kind-local)
+│   ├── use-ghcr-images/     # Remap base images → GHCR (enabled on kind-local)
+│   ├── use-eso-vault/       # ExternalSecret → Vault (opt-in; replaces demo Secrets)
+│   └── use-eso-vault-cnpg/  # ExternalSecret → Vault for CNPG connection + bootstrap creds
 └── overlays/
     ├── kind-local/          # Local Kind — Istio sidecar + Istio Gateway/VS
+    ├── kind-local-eso/      # kind-local + External Secrets (Vault)
     ├── kind-local-gateway-api/  # Kind — sidecar + Kubernetes Gateway API ingress
     ├── kind-local-ambient/  # Same as kind-local, Istio ambient + waypoint
     ├── kind-local-ambient-cnpg/  # Ambient + CloudNativePG
+    ├── kind-local-ambient-cnpg-eso/  # ambient + CNPG + ESO/Vault
     └── gke-dev/             # GKE dev — upstream-shaped (LoadBalancer, GCP telemetry on)
 ```
 
@@ -36,9 +40,11 @@ deploy/
 | Overlay | Target | Intent |
 |---------|--------|--------|
 | **`kind-local`** | Kind + Istio sidecar + ingress LB | Local mesh — **Istio sidecar** + classic Istio Gateway/VS |
+| **`kind-local-eso`** | Same as `kind-local` + ESO + Vault | Secrets from Vault — [README](overlays/kind-local-eso/README.md) |
 | **`kind-local-gateway-api`** | Kind + Gateway API CRDs + a `GatewayClass` | Sidecar + **[Gateway API](https://gateway-api.sigs.k8s.io/docs/introduction/)** ingress (`Gateway`/`HTTPRoute`) — [README](overlays/kind-local-gateway-api/README.md) |
 | **`kind-local-ambient`** | Kind + Istio ambient | Same stack, **Istio ambient** + waypoint — see [kind-local-ambient/README.md](overlays/kind-local-ambient/README.md) |
 | **`kind-local-ambient-cnpg`** | Kind + ambient + CNPG operator | Ambient + **CloudNativePG** instead of embedded Postgres — [kind-local-ambient-cnpg/README.md](overlays/kind-local-ambient-cnpg/README.md) |
+| **`kind-local-ambient-cnpg-eso`** | Same + ESO + Vault | CNPG + secrets from Vault — [README](overlays/kind-local-ambient-cnpg-eso/README.md) |
 | **`gke-dev`** | GKE development | **Upstream default** — LoadBalancer frontend, GCP telemetry **on** (see [gke-dev/README.md](overlays/gke-dev/README.md)) |
 
 Same **`base/`** for all — no contradiction. **`gke-dev`** is what Bank of Anthos was written for; Kind overlays adapt it for a local cluster you provide.
@@ -49,11 +55,15 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 
 **Kind (sidecar + classic Istio ingress):** Kind + **Istio sidecar** + an ingress gateway Service (e.g. Helm `istio-ingress` + MetalLB). Overlay **`kind-local`** pulls **GHCR** images by default (`use-ghcr-images`); packages must be public or use an `imagePullSecret`.
 
+**Kind (ESO + Vault):** Same as `kind-local`, but secrets from Vault — overlay **`kind-local-eso`**. Requires platform **ESO + Vault + `SecretStore` `vault-banking-platform`** (and auth) — [README](overlays/kind-local-eso/README.md).
+
 **Kind (Gateway API ingress):** Kind + **Gateway API CRDs** + a `GatewayClass` (today often `istio` if Istio is installed). Overlay **`kind-local-gateway-api`** — [README](overlays/kind-local-gateway-api/README.md). Uses Kubernetes `Gateway` + `HTTPRoute` instead of Istio `VirtualService`. Later, point `gatewayClassName` at a non-Istio controller if you install one on the cluster.
 
 **Kind (ambient):** Kind with **Istio ambient** only, Gateway API CRDs, Istio CNI for ztunnel — overlay **`kind-local-ambient`**, not `kind-local`.
 
 **Kind (ambient + CNPG):** CNPG operator installed; use **`kind-local-ambient-cnpg`**. Edit `cnpg-connection-targets.yaml` to point at your clusters.
+
+**Kind (ambient + CNPG + ESO):** Overlay **`kind-local-ambient-cnpg-eso`** — same as ambient-cnpg with ExternalSecrets; platform provides SecretStores in `banking-platform` and `cnpg-banking` — [README](overlays/kind-local-ambient-cnpg-eso/README.md).
 
 **GKE:** GKE cluster + `kubectl`; for full GCP telemetry, Workload Identity / Cloud Ops (or add `disable-gcp-telemetry` component until configured).
 
@@ -63,8 +73,8 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 
 | Overlay | Default image source |
 |---------|---------------------|
-| **`kind-local`**, **`kind-local-gateway-api`** | **GHCR** — `ghcr.io/tycho-1/tiho-banking-platform/<service>` (component `use-ghcr-images` in overlay) |
-| **`kind-local-ambient`**, **`kind-local-ambient-cnpg`** | **GHCR** — inherits `use-ghcr-images` from [`kind-local`](overlays/kind-local/kustomization.yaml) |
+| **`kind-local`**, **`kind-local-eso`**, **`kind-local-gateway-api`** | **GHCR** — `ghcr.io/tycho-1/tiho-banking-platform/<service>` (component `use-ghcr-images` in overlay) |
+| **`kind-local-ambient`**, **`kind-local-ambient-cnpg`**, **`kind-local-ambient-cnpg-eso`** | **GHCR** — inherits `use-ghcr-images` from [`kind-local`](overlays/kind-local/kustomization.yaml) |
 | **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
 
 Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.10`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
@@ -92,11 +102,31 @@ Pin tags in [components/use-ghcr-images/kustomization.yaml](components/use-ghcr-
 
 ## Secrets (demo in git, correct K8s types)
 
-Passwords and JWT material use **Secret** objects (not ConfigMaps). Values remain in git so `kubectl apply -k` stays one-shot — same ease as upstream BoA, better typing for RBAC / ESO later.
+Passwords and JWT material use **Secret** objects (not ConfigMaps). On **`kind-local`** / most overlays, values remain in git so `kubectl apply -k` stays one-shot — same ease as upstream BoA, better typing for RBAC.
+
+For **Vault-backed secrets**, use **`kind-local-eso`** or **`kind-local-ambient-cnpg-eso`**. This repo ships **ExternalSecrets** only; the platform provides `SecretStore` `vault-banking-platform` (+ auth). See [`use-eso-vault`](components/use-eso-vault/) / [`use-eso-vault-cnpg`](components/use-eso-vault-cnpg/).
+
+Expected KV v2 layout under mount **`platform-kv`**:
+
+```text
+platform-kv/
+└── tiho-banking-platform/
+    ├── db/
+    │   ├── accounts          # → accounts-db-secrets          (use-eso-vault)
+    │   └── ledger            # → ledger-db-secrets            (use-eso-vault)
+    ├── auth/
+    │   └── jwt               # → jwt-key                      (use-eso-vault)
+    ├── demo/
+    │   └── login             # → demo-data-secrets            (use-eso-vault)
+    └── cnpg/                 # CNPG overlays only (use-eso-vault-cnpg)
+        ├── accounts-creds    # → banking-accounts-credentials
+        ├── ledger-creds      # → banking-ledger-credentials
+        └── connection        # → cnpg-connection-secrets
+```
 
 | Secret | Keys (examples) |
 |--------|-----------------|
-| `jwt-key` | RSA keypair (`demo-jwt`) |
+| `jwt-key` | RSA keypair (`demo-jwt` on non-ESO overlays; Vault on `kind-local-eso`) |
 | `accounts-db-secrets` | `ACCOUNTS_DB_URI`, `POSTGRES_PASSWORD` (`demo-password-change-me`) |
 | `ledger-db-secrets` | `POSTGRES_PASSWORD`, `SPRING_DATASOURCE_PASSWORD` (`demo-password-change-me`) |
 | `demo-data-secrets` | `DEMO_LOGIN_PASSWORD` (`bankofanthos` — matches seeded bcrypt hash) |
@@ -117,6 +147,14 @@ kubectl apply -k deploy/overlays/kind-local
 # Wait
 kubectl wait --for=condition=Available deployment --all -n banking-platform --timeout=300s
 kubectl get pods -n banking-platform
+```
+
+**Kind (sidecar + ESO)** — overlay `kind-local-eso` (see [overlays/kind-local-eso/README.md](overlays/kind-local-eso/README.md)):
+
+```bash
+kubectl apply -k deploy/overlays/kind-local-eso
+kubectl wait --for=condition=Ready externalsecret --all -n banking-platform --timeout=120s
+kubectl wait --for=condition=Available deployment --all -n banking-platform --timeout=300s
 ```
 
 **Kind (Gateway API ingress)** — overlay `kind-local-gateway-api` ([README](overlays/kind-local-gateway-api/README.md)):
@@ -288,9 +326,11 @@ When you add cloud clusters, use **consistent names** — for learning and portf
 
 ```text
 deploy/overlays/kind-local/              # local Kind — Istio sidecar + Gateway/VS
+deploy/overlays/kind-local-eso/          # local Kind — sidecar + ESO/Vault
 deploy/overlays/kind-local-gateway-api/  # local Kind — Gateway API ingress (present now)
 deploy/overlays/kind-local-ambient/      # local Kind — Istio ambient
 deploy/overlays/kind-local-ambient-cnpg/ # local Kind — ambient + CNPG
+deploy/overlays/kind-local-ambient-cnpg-eso/ # ambient + CNPG + ESO/Vault
 deploy/overlays/gke-dev/                 # GKE development (upstream-shaped) — present now
 deploy/overlays/eks-dev/                 # AWS EKS development — planned
 deploy/overlays/aks-dev/                 # Azure AKS development — planned

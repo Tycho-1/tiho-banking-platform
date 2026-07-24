@@ -1,0 +1,25 @@
+# Delete git-backed demo Secrets from base / demo-jwt; ExternalSecrets recreate
+# the same Secret names and keys from Vault.
+#
+# Opt in from an overlay:
+#
+#   components:
+#     - ../../components/use-eso-vault
+#
+# Prerequisites (platform): ESO; SecretStore named vault-banking-platform in
+# banking-platform (+ auth, e.g. vault-token). This component ships ExternalSecrets
+# only — see README.md.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - externalsecret-accounts-db.yaml
+  - externalsecret-ledger-db.yaml
+  - externalsecret-jwt-key.yaml
+  - externalsecret-demo-login.yaml
+
+patches:
+  - path: delete-accounts-db-secrets.yaml
+  - path: delete-ledger-db-secrets.yaml
+  - path: delete-demo-data-secrets.yaml
+  - path: delete-jwt-key.yaml

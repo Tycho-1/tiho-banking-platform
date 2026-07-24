@@ -1,0 +1,21 @@
+# CNPG-related secrets via ESO (phase 2).
+# Use together with use-eso-vault on a CNPG + ESO overlay.
+#
+#   components:
+#     - ../../components/use-eso-vault
+#     - ../../components/use-eso-vault-cnpg
+#
+# Prerequisites (platform): SecretStore vault-banking-platform in banking-platform
+# and in cnpg-banking (+ auth). This component ships ExternalSecrets only.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - externalsecret-cnpg-connection.yaml
+  - externalsecret-cnpg-accounts-creds.yaml
+  - externalsecret-cnpg-ledger-creds.yaml
+
+patches:
+  - path: delete-cnpg-connection-secrets.yaml
+  - path: delete-banking-accounts-credentials.yaml
+  - path: delete-banking-ledger-credentials.yaml
