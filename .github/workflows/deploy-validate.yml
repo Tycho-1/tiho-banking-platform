@@ -20,19 +20,21 @@ jobs:
   kustomize:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
 
       - name: Build overlays
         run: |
           set -euo pipefail
           for overlay in \
             deploy/overlays/kind-local \
+            deploy/overlays/kind-local-eso \
             deploy/overlays/kind-local-gateway-api \
             deploy/overlays/kind-local-ambient \
             deploy/overlays/kind-local-ambient-cnpg \
+            deploy/overlays/kind-local-ambient-cnpg-eso \
             deploy/overlays/gke-dev
           do
             echo "==> kustomize ${overlay}"
