@@ -15,6 +15,7 @@ Implemented in Python with Flask.
 | `/login`   | POST  |       |  Submits login request to `userservice`                                                   |
 | `/logout`  | POST  | 🔒    | delete local authentication token and redirect to `/login`                                |
 | `/payment` | POST  | 🔒    |  Submits a new internal payment transaction to `ledgerwriter`                             |
+| `/products`| GET   | 🔒    |  Renders Save & invest page (calls `product-catalog` with Bearer token)                 |
 | `/ready`   | GET   |       |  Readiness probe endpoint.                                                                |
 | `/signup`  | GET   |       |  Renders signup page if not authenticated. Otherwise redirects to `/home`                 |
 | `/signup`  | POST  |       |  Submits new user signup request to `userservice`                                         |
@@ -56,6 +57,8 @@ Implemented in Python with Flask.
     - the address and port of the `contacts` service
   - `USERSERVICE_API_ADDR`
     - the address and port of the `userservice`
+  - `PRODUCTS_API_ADDR`
+    - the address and port of the `product-catalog` service
 
 ### Kubernetes Resources
 

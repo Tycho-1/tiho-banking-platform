@@ -32,3 +32,5 @@ images:
     newTag: v0.6.9
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/loadgenerator
     newTag: v0.6.9
+  - name: ghcr.io/tycho-1/tiho-banking-platform/product-catalog
+    newTag: v0.1.0

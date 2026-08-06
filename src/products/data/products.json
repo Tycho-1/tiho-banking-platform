@@ -1,0 +1,64 @@
+{
+  "products": [
+    {
+      "id": "savings-hysa",
+      "type": "savings",
+      "name": "High-Yield Savings",
+      "apy": "4.25",
+      "minimumBalance": "0",
+      "description": "No monthly fees. FDIC-style demo product."
+    },
+    {
+      "id": "savings-premium",
+      "type": "savings",
+      "name": "Premium Savings",
+      "apy": "3.80",
+      "minimumBalance": "5000",
+      "description": "Higher balance tier with competitive APY."
+    },
+    {
+      "id": "cd-12m",
+      "type": "cd",
+      "name": "12-Month Term Deposit",
+      "term": "12 months",
+      "rate": "4.50",
+      "minimumBalance": "1000",
+      "earlyWithdrawalNote": "Early withdrawal may reduce earned interest (demo).",
+      "description": "Fixed rate for one year."
+    },
+    {
+      "id": "cd-24m",
+      "type": "cd",
+      "name": "24-Month Term Deposit",
+      "term": "24 months",
+      "rate": "4.75",
+      "minimumBalance": "1000",
+      "earlyWithdrawalNote": "Early withdrawal may reduce earned interest (demo).",
+      "description": "Lock in a longer-term rate."
+    },
+    {
+      "id": "investment-balanced",
+      "type": "investment",
+      "name": "Balanced Growth Fund",
+      "riskLevel": "Moderate",
+      "description": "Diversified demo fund for long-term goals.",
+      "disclaimer": "Not a real investment product. Not financial advice."
+    },
+    {
+      "id": "investment-conservative",
+      "type": "investment",
+      "name": "Conservative Income Fund",
+      "riskLevel": "Low",
+      "description": "Demo fund focused on stability and income.",
+      "disclaimer": "Not a real investment product. Not financial advice."
+    },
+    {
+      "id": "investment-aggressive",
+      "type": "investment",
+      "name": "Global Equity Fund",
+      "riskLevel": "High",
+      "description": "Demo fund with higher growth potential and volatility.",
+      "disclaimer": "Not a real investment product. Not financial advice."
+    }
+  ]
+}

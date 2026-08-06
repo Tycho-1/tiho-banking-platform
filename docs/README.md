@@ -5,8 +5,9 @@
 | Document | Contents |
 |----------|----------|
 | [architecture.md](architecture.md) | Services, JWT auth, money flows, Kind/GKE deploy options |
+| [product-catalog-requirements.md](product-catalog-requirements.md) | Product-catalog (Go) — design spec, acceptance criteria, v1 scope |
 | [upstream.md](upstream.md) | Bank of Anthos attribution, version pin, how to sync `src/` |
-| [TODO.md](TODO.md) | Follow-ups (public platform repo, ESO, Flux, …) |
+| [TODO.md](TODO.md) | Done + follow-ups (OTEL/Prometheus, Flux, public platform repo, …) |
 
 Deploy detail (all overlays): **[deploy/README.md](../deploy/README.md)**.
 
@@ -23,6 +24,7 @@ Each microservice folder has its own `README.md` with build and API notes from G
 | Ledger writer | [src/ledger/ledgerwriter/README.md](../src/ledger/ledgerwriter/README.md) |
 | Transaction history | [src/ledger/transactionhistory/README.md](../src/ledger/transactionhistory/README.md) |
 | Load generator | [src/loadgenerator/README.md](../src/loadgenerator/README.md) |
+| Product catalog (Go, Tiho) | [src/products/README.md](../src/products/README.md) |
 
 ## Upstream docs — what to copy vs skip
 

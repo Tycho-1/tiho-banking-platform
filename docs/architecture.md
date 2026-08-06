@@ -11,12 +11,14 @@ Browser
         ├── contacts ─────► accounts-db
         ├── balancereader ──► ledger-db
         ├── transactionhistory ──► ledger-db
-        └── ledgerwriter ──► ledger-db
+        ├── ledgerwriter ──► ledger-db
+        └── product-catalog (Go)   ← read-only products API, no DB (v1)
 ```
 
 | Service | Role |
 |---------|------|
-| **frontend** | Web UI — login, signup, home, deposit, transfer |
+| **frontend** | Web UI — login, signup, home, deposit, transfer, **Save & invest** (`/products`) |
+| **product-catalog** | Read-only bank products API (Go) — savings, CDs, investments demo |
 | **userservice** | Accounts, bcrypt passwords, **issues RS256 JWT** |
 | **contacts** | Per-user contact list for payment forms |
 | **balancereader** | Cached balances from ledger |

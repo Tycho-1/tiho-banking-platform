@@ -9,3 +9,4 @@ patches:
   - path: patch-balancereader.yaml
   - path: patch-ledgerwriter.yaml
   - path: patch-transactionhistory.yaml
+  - path: patch-product-catalog.yaml

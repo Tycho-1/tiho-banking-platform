@@ -1,0 +1,84 @@
+name: product-catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/products/**'
+      - '.github/workflows/product-catalog.yml'
+  pull_request:
+    paths:
+      - 'src/products/**'
+      - '.github/workflows/product-catalog.yml'
+
+concurrency:
+  group: product-catalog-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SERVICE_NAME: product-catalog
+  SERVICE_PATH: src/products
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: ${{ env.SERVICE_PATH }}/go.sum
+
+      - name: Test
+        run: go test ./...
+        working-directory: ${{ env.SERVICE_PATH }}
+
+      - name: Vet
+        run: go vet ./...
+        working-directory: ${{ env.SERVICE_PATH }}
+
+      - name: Docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: false
+          tags: ${{ env.SERVICE_NAME }}:ci
+
+  publish:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ENABLE_IMAGE_PUSH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')/${{ env.SERVICE_NAME }}" >> "$GITHUB_ENV"
+
+      - name: Read semver from release.yaml
+        id: version
+        working-directory: ${{ env.SERVICE_PATH }}
+        run: |
+          version=$(sed -n 's/^version:[[:space:]]*"\?\([^"#]*\)"\?.*/\1/p' release.yaml | tr -d '[:space:]')
+          if [ -z "$version" ]; then
+            echo "Missing or empty version in release.yaml" >&2
+            exit 1
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.version.outputs.tag }}
+            ${{ env.IMAGE }}:${{ github.sha }}

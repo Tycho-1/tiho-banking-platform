@@ -1,0 +1,101 @@
+<!--
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<html lang="en">
+  <head>
+{% include 'shared/html_head.html' %}
+  </head>
+  <body>
+{% include 'shared/platform_banner.html' %}
+{% include 'shared/navigation.html' %}
+    <main class="container">
+      <div class="row col-lg-12 align-items-start top-row">
+        <div class="col-md-8">
+          <small class="text-uppercase text-muted secondary-text">Save &amp; invest</small>
+          <h2 class="header-title">Bank Products</h2>
+        </div>
+      </div>
+
+      <div class="row col-lg-12 align-items-start mb-3">
+        <div class="col-lg-12">
+          <div class="alert alert-info demo-disclaimer" role="alert">
+            Demo only — not a real bank and not financial advice. Product rates and terms are illustrative.
+          </div>
+        </div>
+      </div>
+
+      <div class="row col-lg-12 align-items-start mb-4">
+        <div class="col-lg-12">
+          <ul class="nav nav-pills product-filter-nav">
+            <li class="nav-item">
+              <a class="nav-link{% if active_type == '' %} active{% endif %}" href="/products">All</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link{% if active_type == 'savings' %} active{% endif %}" href="/products?type=savings">Savings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link{% if active_type == 'cd' %} active{% endif %}" href="/products?type=cd">CDs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link{% if active_type == 'investment' %} active{% endif %}" href="/products?type=investment">Investments</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row col-lg-12 align-items-start">
+      {% for product in products %}
+        <div class="col-lg-4 mb-4">
+          <div class="card product-card h-100">
+            <div class="card-body">
+              <small class="text-uppercase text-muted secondary-text">{{ product.type }}</small>
+              <h4 class="card-title">{{ product.name }}</h4>
+              <p class="card-text">{{ product.description }}</p>
+              {% if product.apy %}
+              <p><strong>APY:</strong> {{ product.apy }}%</p>
+              {% endif %}
+              {% if product.rate %}
+              <p><strong>Rate:</strong> {{ product.rate }}%</p>
+              {% endif %}
+              {% if product.term %}
+              <p><strong>Term:</strong> {{ product.term }}</p>
+              {% endif %}
+              {% if product.minimumBalance %}
+              <p><strong>Minimum balance:</strong> ${{ product.minimumBalance }}</p>
+              {% endif %}
+              {% if product.riskLevel %}
+              <p><strong>Risk level:</strong> {{ product.riskLevel }}</p>
+              {% endif %}
+              {% if product.earlyWithdrawalNote %}
+              <p class="text-muted"><small>{{ product.earlyWithdrawalNote }}</small></p>
+              {% endif %}
+              {% if product.disclaimer %}
+              <p class="text-muted"><small>{{ product.disclaimer }}</small></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="col-lg-12">
+          <p>No products found for this filter.</p>
+        </div>
+      {% endfor %}
+      </div>
+    </main>
+{% include 'shared/footer.html' %}
+{% include 'shared/scripts.html' %}
+  </body>
+</html>

@@ -14,3 +14,4 @@ resources:
   - ledger-writer.yaml
   - transaction-history.yaml
   - loadgenerator.yaml
+  - product-catalog.yaml

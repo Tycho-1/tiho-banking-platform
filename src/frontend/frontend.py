@@ -170,6 +170,49 @@ def create_app():
                                pod_name=pod_name,
                                pod_zone=pod_zone)
 
+    @app.route("/products")
+    def products_page():
+        """
+        Renders products page. Redirects to /login if token is not valid
+        """
+        token = request.cookies.get(app.config['TOKEN_NAME'])
+        if not verify_token(token):
+            app.logger.debug('User isn\'t authenticated. Redirecting to login page.')
+            return redirect(url_for('login_page',
+                                    _external=True,
+                                    _scheme=app.config['SCHEME']))
+        token_data = decode_token(token)
+        display_name = token_data['name']
+        hed = {'Authorization': 'Bearer ' + token}
+        active_type = request.args.get('type', '')
+        products_url = app.config['PRODUCTS_URI']
+        if active_type:
+            products_url = f'{products_url}?type={active_type}'
+
+        products_list = []
+        try:
+            resp = requests.get(url=products_url,
+                                headers=hed,
+                                timeout=app.config['BACKEND_TIMEOUT'])
+            if resp.ok:
+                products_list = resp.json().get('products', [])
+            else:
+                app.logger.error('Error fetching products: %s', resp.text)
+        except (RequestException, HTTPError) as err:
+            app.logger.error('Error fetching products: %s', str(err))
+
+        return render_template('products.html',
+                               active_type=active_type,
+                               bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
+                               cluster_name=cluster_name,
+                               cymbal_logo=os.getenv('CYMBAL_LOGO', 'false'),
+                               name=display_name,
+                               platform=platform,
+                               platform_display_name=platform_display_name,
+                               pod_name=pod_name,
+                               pod_zone=pod_zone,
+                               products=products_list)
+
     def _populate_contact_labels(account_id, transactions, contacts):
         """
         Populate contact labels for the passed transactions.
@@ -671,6 +714,8 @@ def create_app():
         os.environ.get('USERSERVICE_API_ADDR'))
     app.config["CONTACTS_URI"] = 'http://{}/contacts'.format(
         os.environ.get('CONTACTS_API_ADDR'))
+    app.config["PRODUCTS_URI"] = 'http://{}/api/products'.format(
+        os.environ.get('PRODUCTS_API_ADDR'))
     app.config['PUBLIC_KEY'] = open(os.environ.get('PUB_KEY_PATH'), 'r').read()
     app.config['LOCAL_ROUTING'] = os.getenv('LOCAL_ROUTING_NUM')
     # timeout in seconds for calls to the backend
