@@ -11,6 +11,8 @@ on:
       - 'src/products/**'
       - '.github/workflows/product-catalog.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: product-catalog-${{ github.ref }}
   cancel-in-progress: true

@@ -12,6 +12,8 @@ on:
       - 'deploy/**'
       - '.github/workflows/deploy-validate.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: deploy-validate-${{ github.ref }}
   cancel-in-progress: true

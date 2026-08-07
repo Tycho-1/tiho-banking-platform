@@ -11,6 +11,8 @@ on:
       - 'src/ledger/balancereader/**'
       - '.github/workflows/balancereader.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: balancereader-${{ github.ref }}
   cancel-in-progress: true

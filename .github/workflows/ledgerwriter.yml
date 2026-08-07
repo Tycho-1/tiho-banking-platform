@@ -11,6 +11,8 @@ on:
       - 'src/ledger/ledgerwriter/**'
       - '.github/workflows/ledgerwriter.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: ledgerwriter-${{ github.ref }}
   cancel-in-progress: true

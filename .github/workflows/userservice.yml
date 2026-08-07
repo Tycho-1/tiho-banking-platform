@@ -11,6 +11,8 @@ on:
       - 'src/accounts/userservice/**'
       - '.github/workflows/userservice.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: userservice-${{ github.ref }}
   cancel-in-progress: true

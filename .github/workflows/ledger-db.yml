@@ -11,6 +11,8 @@ on:
       - 'src/ledger/ledger-db/**'
       - '.github/workflows/ledger-db.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: ledger-db-${{ github.ref }}
   cancel-in-progress: true

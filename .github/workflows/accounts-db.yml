@@ -12,6 +12,8 @@ on:
       - 'src/accounts/accounts-db/**'
       - '.github/workflows/accounts-db.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: accounts-db-${{ github.ref }}
   cancel-in-progress: true

@@ -11,6 +11,8 @@ on:
       - 'src/accounts/contacts/**'
       - '.github/workflows/contacts.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: contacts-${{ github.ref }}
   cancel-in-progress: true

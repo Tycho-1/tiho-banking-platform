@@ -11,6 +11,8 @@ on:
       - 'src/ledger/transactionhistory/**'
       - '.github/workflows/transactionhistory.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: transactionhistory-${{ github.ref }}
   cancel-in-progress: true

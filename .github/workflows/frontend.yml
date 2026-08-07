@@ -11,6 +11,8 @@ on:
       - 'src/frontend/**'
       - '.github/workflows/frontend.yml'
 
+  workflow_dispatch:
+
 concurrency:
   group: frontend-${{ github.ref }}
   cancel-in-progress: true
