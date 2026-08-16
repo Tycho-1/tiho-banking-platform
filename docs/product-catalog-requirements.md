@@ -4,7 +4,7 @@ Requirements summary for a new **Go** microservice that extends Tiho Banking Pla
 
 **Status:** implemented (v1) — Go service + frontend `/products` page. **Not committed yet.**
 
-**Versions (this change):** frontend `v0.6.11` · product-catalog `v0.1.0`
+**Versions (this change):** frontend `v0.6.11` · product-catalog `v0.1.1`
 
 **Verified so far:** `go test ./...` · local `curl` with JWT · `kubectl kustomize` on overlays. **Not yet:** browser UI · full Kind deploy with new images.
 
@@ -262,7 +262,7 @@ Each overlay that runs the full app must include the new Deployment and image pi
 
 - `deploy/overlays/kind-local/` — image pin + inherits on ambient overlays
 - `deploy/overlays/gke-dev/`
-- `deploy/components/use-ghcr-images/` — frontend `v0.6.11`, product-catalog `v0.1.0`
+- `deploy/components/use-ghcr-images/` — frontend `v0.6.11`, product-catalog `v0.1.1`
 
 ### 8.4 Container image
 
@@ -397,7 +397,7 @@ Browser
 - [ ] Dockerfile produces a runnable image (CI or local `docker build`)
 - [ ] `/products` in browser (frontend local or Kind)
 - [ ] Kind deploy: login → **Save & invest** → products visible
-- [ ] GHCR push: `frontend:v0.6.11` + `product-catalog:v0.1.0` after commit + push
+- [ ] GHCR push: `frontend:v0.6.11` + `product-catalog:v0.1.1` after commit + push
 
 ---
 
@@ -445,7 +445,7 @@ Unlike frontend/contacts, **Google does not publish a `product-catalog` image**.
 
 ```yaml
   - name: ghcr.io/<owner>/tiho-banking-platform/product-catalog
-    newTag: v0.1.0
+    newTag: v0.1.1
 ```
 
 3. In `deploy/base/product-catalog.yaml`, set `image:` to that name (tag overridden by Kustomize).

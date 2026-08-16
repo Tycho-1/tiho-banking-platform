@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -83,6 +84,119 @@ func TestHandleProductsRequiresJWT(t *testing.T) {
 	if len(payload.Products) != 1 || payload.Products[0].ID != "x" {
 		t.Fatalf("unexpected payload: %+v", payload.Products)
 	}
+}
+
+func TestMetricsEndpoint(t *testing.T) {
+	srv := testServer(t)
+	handler := srv.handler()
+
+	// Prime middleware so counters exist in exposition output.
+	prime := httptest.NewRequest(http.MethodGet, "/health", nil)
+	handler.ServeHTTP(httptest.NewRecorder(), prime)
+
+	req := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, "product_catalog_http_requests_total") {
+		t.Fatalf("expected product_catalog_http_requests_total in metrics output")
+	}
+	if !strings.Contains(body, "product_catalog_http_request_duration_seconds") {
+		t.Fatalf("expected product_catalog_http_request_duration_seconds in metrics output")
+	}
+	if !strings.Contains(body, "go_goroutines") {
+		t.Fatalf("expected go_goroutines from Go collector in metrics output")
+	}
+}
+
+func TestMetricsMiddlewareRecordsRequests(t *testing.T) {
+	srv := testServer(t)
+	handler := srv.handler()
+
+	healthReq := httptest.NewRequest(http.MethodGet, "/health", nil)
+	healthRec := httptest.NewRecorder()
+	handler.ServeHTTP(healthRec, healthReq)
+	if healthRec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", healthRec.Code)
+	}
+
+	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	metricsRec := httptest.NewRecorder()
+	handler.ServeHTTP(metricsRec, metricsReq)
+	body := metricsRec.Body.String()
+	if !strings.Contains(body, `product_catalog_http_requests_total{method="GET",path="/health",status="200"}`) {
+		t.Fatalf("expected /health request in metrics, got:\n%s", body)
+	}
+	if strings.Contains(body, `path="/metrics"`) {
+		t.Fatalf("did not expect /metrics scrape in http_requests_total, got:\n%s", body)
+	}
+}
+
+func TestProductsRequestByTypeMetric(t *testing.T) {
+	srv, token := testServerWithToken(t)
+	handler := srv.handler()
+
+	for _, q := range []struct {
+		query string
+	}{
+		{""},
+		{"?type=savings"},
+	} {
+		req := httptest.NewRequest(http.MethodGet, "/api/products"+q.query, nil)
+		req.Header.Set("Authorization", "Bearer "+token)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("query %q: expected 200, got %d", q.query, rec.Code)
+		}
+	}
+
+	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	metricsRec := httptest.NewRecorder()
+	handler.ServeHTTP(metricsRec, metricsReq)
+	body := metricsRec.Body.String()
+
+	if !strings.Contains(body, `product_catalog_products_requests_total{type="all"}`) {
+		t.Fatalf("expected all-type product request metric, got:\n%s", body)
+	}
+	if !strings.Contains(body, `product_catalog_products_requests_total{type="savings"}`) {
+		t.Fatalf("expected savings product request metric, got:\n%s", body)
+	}
+}
+
+func testServer(t *testing.T) *server {
+	srv, _ := testServerWithToken(t)
+	return srv
+}
+
+func testServerWithToken(t *testing.T) (*server, string) {
+	t.Helper()
+
+	dir := t.TempDir()
+	dataPath := filepath.Join(dir, "products.json")
+	if err := os.WriteFile(dataPath, []byte(`{"products":[{"id":"x","type":"savings","name":"Demo"}]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	keyPath, token := writeTestJWT(t)
+	catalog, err := loadCatalog(dataPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	verifier, err := newTokenVerifier(keyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return &server{
+		version:  "test",
+		catalog:  catalog,
+		verifier: verifier,
+	}, token
 }
 
 func writeTestJWT(t *testing.T) (string, string) {

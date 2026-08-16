@@ -28,6 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("load catalog: %v", err)
 	}
+	setCatalogProductsLoaded(len(catalog.products))
 
 	verifier, err := newTokenVerifier(pubKeyPath)
 	if err != nil {
@@ -40,15 +41,9 @@ func main() {
 		verifier: verifier,
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", srv.handleHealth)
-	mux.HandleFunc("/ready", srv.handleReady)
-	mux.HandleFunc("/version", srv.handleVersion)
-	mux.HandleFunc("/api/products", srv.handleProducts)
-
 	addr := ":" + port
 	log.Printf("product-catalog listening on %s", addr)
-	if err := http.ListenAndServe(addr, mux); err != nil {
+	if err := http.ListenAndServe(addr, srv.handler()); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
 }
@@ -78,6 +73,7 @@ func (s *server) handleProducts(w http.ResponseWriter, r *http.Request) {
 
 	productType := strings.TrimSpace(r.URL.Query().Get("type"))
 	products := s.catalog.list(productType)
+	recordProductsRequest(productType)
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(map[string][]Product{"products": products}); err != nil {

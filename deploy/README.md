@@ -77,7 +77,7 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 | **`kind-local-ambient`**, **`kind-local-ambient-cnpg`**, **`kind-local-ambient-cnpg-eso`** | **GHCR** — inherits `use-ghcr-images` from [`kind-local`](overlays/kind-local/kustomization.yaml) |
 | **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
 
-Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.11`, product-catalog `v0.1.0`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
+Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.11`, product-catalog `v0.1.1`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
 
 ### Use upstream BoA images on Kind overlays
 

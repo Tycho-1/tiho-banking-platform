@@ -65,7 +65,7 @@ spec:
       containers:
         - env:
             - name: VERSION
-              value: v0.1.0
+              value: v0.1.1
             - name: PORT
               value: "8080"
             - name: ENABLE_TRACING
@@ -79,7 +79,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: environment-config
-          image: ghcr.io/tycho-1/tiho-banking-platform/product-catalog:v0.1.0
+          image: ghcr.io/tycho-1/tiho-banking-platform/product-catalog:v0.1.1
           name: product-catalog
           readinessProbe:
             httpGet:
