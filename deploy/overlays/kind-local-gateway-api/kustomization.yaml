@@ -16,6 +16,7 @@ components:
   - ../../components/frontend-clusterip
   - ../../components/gateway-api-ingress
   - ../../components/use-ghcr-images
+  - ../../components/prometheus-servicemonitors
 
 # Pin image tags in one place for GitOps promotion (CI updates newTag per service).
 images:

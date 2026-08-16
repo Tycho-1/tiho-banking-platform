@@ -17,6 +17,7 @@ deploy/
 │   ├── use-cnpg-databases/  # Point apps at CNPG; drop embedded StatefulSets
 │   ├── cnpg-banking-clusters/  # Optional dedicated CNPG Cluster CRs
 │   ├── use-ghcr-images/     # Remap base images → GHCR (enabled on kind-local)
+│   ├── prometheus-servicemonitors/  # Kind: scrape product-catalog /metrics
 │   ├── use-eso-vault/       # ExternalSecret → Vault (opt-in; replaces demo Secrets)
 │   └── use-eso-vault-cnpg/  # ExternalSecret → Vault for CNPG connection + bootstrap creds
 └── overlays/

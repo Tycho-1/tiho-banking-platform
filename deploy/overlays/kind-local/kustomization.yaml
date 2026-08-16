@@ -15,6 +15,7 @@ components:
   - ../../components/strip-gke-workload-identity
   - ../../components/frontend-clusterip
   - ../../components/use-ghcr-images
+  - ../../components/prometheus-servicemonitors
 
 # Pin image tags in one place for GitOps promotion (CI updates newTag per service).
 images:

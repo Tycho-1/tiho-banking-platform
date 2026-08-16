@@ -1,0 +1,8 @@
+# Prometheus Operator ServiceMonitors for app /metrics endpoints.
+# Kind overlays only — requires the ServiceMonitor CRD (kube-prometheus-stack).
+# Not on gke-dev (GCP Cloud Ops, no Prometheus Operator).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - servicemonitor-product-catalog.yaml

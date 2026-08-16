@@ -8,6 +8,7 @@
 | **Container images** | component `use-ghcr-images` → `ghcr.io/tycho-1/tiho-banking-platform/<service>` (tags in [use-ghcr-images](../../components/use-ghcr-images/kustomization.yaml)) |
 | GCP telemetry off | component `disable-gcp-telemetry` |
 | Frontend ClusterIP | component `frontend-clusterip` |
+| Prometheus scrape | component `prometheus-servicemonitors` (product-catalog `/metrics`) |
 
 **Mesh:** namespace label `istio-injection: enabled` (sidecar, default). For **ambient** Istio, use overlay [`kind-local-ambient`](../kind-local-ambient/) instead.
 
