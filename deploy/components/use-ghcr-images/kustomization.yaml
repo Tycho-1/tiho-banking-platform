@@ -16,7 +16,7 @@ kind: Component
 images:
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
     newName: ghcr.io/tycho-1/tiho-banking-platform/frontend
-    newTag: v0.6.11
+    newTag: v0.6.12
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice
     newName: ghcr.io/tycho-1/tiho-banking-platform/userservice
     newTag: v0.6.9
@@ -42,4 +42,8 @@ images:
     newName: ghcr.io/tycho-1/tiho-banking-platform/loadgenerator
     newTag: v0.6.9
   - name: ghcr.io/tycho-1/tiho-banking-platform/product-catalog
-    newTag: v0.1.1
+    newTag: v0.1.2
+
+patches:
+  - path: patch-frontend-version.yaml
+

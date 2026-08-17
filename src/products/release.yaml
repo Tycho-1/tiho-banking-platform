@@ -1,2 +1,2 @@
 # Service release metadata — CI reads version for GHCR image tags (vX.Y.Z).
-version: "0.1.1"
+version: "0.1.2"

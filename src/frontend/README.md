@@ -60,6 +60,13 @@ Implemented in Python with Flask.
   - `PRODUCTS_API_ADDR`
     - the address and port of the `product-catalog` service
 
+Tracing (optional):
+
+- `ENABLE_TRACING` — `true` to export spans
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — if set, export **OTLP** to the Collector (Kind). If unset, export **Cloud Trace** (GKE)
+- `OTEL_SERVICE_NAME` — span resource `service.name` (default `frontend`)
+- `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf` on Kind
+
 ### Kubernetes Resources
 
 - [deployment/frontend](../../deploy/base/frontend.yaml)

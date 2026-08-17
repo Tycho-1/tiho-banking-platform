@@ -111,5 +111,5 @@ func (s *server) handler() http.Handler {
 	mux.HandleFunc("/version", s.handleVersion)
 	mux.HandleFunc("/api/products", s.handleProducts)
 	mux.Handle("/metrics", promhttp.Handler())
-	return metricsMiddleware(mux)
+	return wrapTracing(metricsMiddleware(mux))
 }

@@ -17,6 +17,7 @@ components:
   - ../../components/gateway-api-ingress
   - ../../components/use-ghcr-images
   - ../../components/prometheus-servicemonitors
+  - ../../components/use-otel-otlp
 
 # Pin image tags in one place for GitOps promotion (CI updates newTag per service).
 images:

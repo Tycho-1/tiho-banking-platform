@@ -18,6 +18,7 @@ deploy/
 │   ├── cnpg-banking-clusters/  # Optional dedicated CNPG Cluster CRs
 │   ├── use-ghcr-images/     # Remap base images → GHCR (enabled on kind-local)
 │   ├── prometheus-servicemonitors/  # Kind: scrape product-catalog /metrics
+│   ├── use-otel-otlp/       # Kind: OTLP traces (frontend + product-catalog)
 │   ├── use-eso-vault/       # ExternalSecret → Vault (opt-in; replaces demo Secrets)
 │   └── use-eso-vault-cnpg/  # ExternalSecret → Vault for CNPG connection + bootstrap creds
 └── overlays/
@@ -78,7 +79,7 @@ Overlays assume a **Kubernetes cluster you create** (typically Kind). This app r
 | **`kind-local-ambient`**, **`kind-local-ambient-cnpg`**, **`kind-local-ambient-cnpg-eso`** | **GHCR** — inherits `use-ghcr-images` from [`kind-local`](overlays/kind-local/kustomization.yaml) |
 | **`gke-dev`** | **Upstream** BoA on Google Artifact Registry |
 
-Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.11`, product-catalog `v0.1.1`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
+Tags for GHCR come from each service’s **`src/<service>/release.yaml`** (e.g. frontend `v0.6.12`, product-catalog `v0.1.2`, others `v0.6.9`). CI publishes on push to `main` when **`ENABLE_IMAGE_PUSH=true`** — see [`.github/workflows/README.md`](../.github/workflows/README.md) and [components/use-ghcr-images/README.md](components/use-ghcr-images/README.md).
 
 ### Use upstream BoA images on Kind overlays
 

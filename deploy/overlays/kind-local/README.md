@@ -9,6 +9,7 @@
 | GCP telemetry off | component `disable-gcp-telemetry` |
 | Frontend ClusterIP | component `frontend-clusterip` |
 | Prometheus scrape | component `prometheus-servicemonitors` (product-catalog `/metrics`) |
+| OTLP traces | component `use-otel-otlp` (frontend + product-catalog → Collector) |
 
 **Mesh:** namespace label `istio-injection: enabled` (sidecar, default). For **ambient** Istio, use overlay [`kind-local-ambient`](../kind-local-ambient/) instead.
 

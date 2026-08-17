@@ -30,6 +30,7 @@ dependencies = [
     "opentelemetry-instrumentation-flask>=0.60b1",
     "opentelemetry-instrumentation-jinja2>=0.60b1",
     "opentelemetry-instrumentation-requests>=0.60b1",
+    "opentelemetry-exporter-otlp-proto-http>=1.39.1",
 ]
 
 [dependency-groups]

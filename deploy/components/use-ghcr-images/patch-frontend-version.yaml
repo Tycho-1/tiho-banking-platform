@@ -1,0 +1,14 @@
+# Keep VERSION in sync with frontend newTag in this component (Kustomize
+# images: does not rewrite env). Base stays v0.6.9 for upstream/gke-dev.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  template:
+    spec:
+      containers:
+        - name: front
+          env:
+            - name: VERSION
+              value: v0.6.12

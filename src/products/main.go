@@ -41,6 +41,9 @@ func main() {
 		verifier: verifier,
 	}
 
+	shutdownTracer := initTracer()
+	defer shutdownTracer()
+
 	addr := ":" + port
 	log.Printf("product-catalog listening on %s", addr)
 	if err := http.ListenAndServe(addr, srv.handler()); err != nil {

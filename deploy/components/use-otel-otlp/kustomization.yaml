@@ -1,0 +1,11 @@
+# Kind: send traces to the platform OpenTelemetry Collector (OTLP HTTP).
+# Applied after disable-gcp-telemetry so ENABLE_TRACING=true wins on frontend
+# and product-catalog. Not on gke-dev (Cloud Trace stays).
+#
+# Requires a Collector reachable at this DNS (platform-owned).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - path: patch-frontend.yaml
+  - path: patch-product-catalog.yaml

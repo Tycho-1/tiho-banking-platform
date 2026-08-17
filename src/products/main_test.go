@@ -113,6 +113,39 @@ func TestMetricsEndpoint(t *testing.T) {
 	}
 }
 
+func TestSkipTracePaths(t *testing.T) {
+	if !skipTracePath("/metrics") || !skipTracePath("/health") || !skipTracePath("/ready") {
+		t.Fatal("expected probes and /metrics to skip traces")
+	}
+	if skipTracePath("/api/products") {
+		t.Fatal("expected /api/products to be traced")
+	}
+}
+
+func TestTracingDisabledWithoutEndpoint(t *testing.T) {
+	t.Setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "")
+	if tracingEnabled() {
+		t.Fatal("expected tracing off when OTEL_EXPORTER_OTLP_ENDPOINT is empty")
+	}
+	h := wrapTracing(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	req := httptest.NewRequest(http.MethodGet, "/api/products", nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("expected 204, got %d", rec.Code)
+	}
+}
+
+func TestTracingDisabledWhenFlagFalse(t *testing.T) {
+	t.Setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318")
+	t.Setenv("ENABLE_TRACING", "false")
+	if tracingEnabled() {
+		t.Fatal("expected tracing off when ENABLE_TRACING=false")
+	}
+}
+
 func TestMetricsMiddlewareRecordsRequests(t *testing.T) {
 	srv := testServer(t)
 	handler := srv.handler()

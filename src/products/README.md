@@ -64,7 +64,7 @@ Prometheus **pulls** metrics from your app; the app does not push to Grafana.
 | `product_catalog_catalog_products_loaded` | Gauge | — | Products loaded from JSON at startup |
 | `go_*`, `process_*` | — | — | Go runtime + process metrics (via collectors) |
 
-Implementation: `metrics.go` — `prometheus/client_golang`, HTTP middleware wraps all routes.
+Implementation: `metrics.go` (Prometheus) and `tracing.go` (OTLP spans). HTTP wrappers sit around the mux; `handleProducts` does not call the tracing API.
 
 ### Local check
 
@@ -89,6 +89,14 @@ Kind overlays include a **ServiceMonitor** (`deploy/components/prometheus-servic
 product_catalog_catalog_products_loaded
 {__name__=~"product_catalog_.*"}
 ```
+
+### OpenTelemetry traces
+
+When `OTEL_EXPORTER_OTLP_ENDPOINT` is set (Kind component `use-otel-otlp`), the service **pushes** traces to the platform Collector over OTLP HTTP. Prometheus `/metrics` scrape is unchanged.
+
+Spans cover `/api/products` (and `/version`). Probes and `/metrics` are not traced.
+
+Parent context comes from the W3C `traceparent` header (frontend injects it via `requests` instrumentation).
 
 ## Product data
 
