@@ -1,6 +1,6 @@
 # GitHub Actions — Tiho Banking Platform
 
-Path-filtered CI per microservice under `src/`. **Build and test run without registry credentials.**
+Path-filtered CI per microservice under `src/`. **Build and test run without registry credentials.** JavaScript actions run on Node 24.
 
 ## Versioning (per-service semver)
 

@@ -36,7 +36,7 @@ jobs:
         working-directory: ${{ env.SERVICE_PATH }}
 
       - name: Docker build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ${{ env.SERVICE_PATH }}
           push: false
@@ -66,13 +66,13 @@ jobs:
           fi
           echo "tag=v${version}" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: ${{ env.SERVICE_PATH }}
           push: true
