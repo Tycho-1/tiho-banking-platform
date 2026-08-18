@@ -1,0 +1,41 @@
+name: Scan container image
+description: Scan a local Docker image with Trivy (policy from trivy.yaml). Image scan only — no fs.
+
+inputs:
+  image-ref:
+    description: Local image tag to scan (e.g. frontend:ci)
+    required: true
+  category:
+    description: SARIF category so parallel service scans do not overwrite each other
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run Trivy vulnerability scanner (SARIF)
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        scan-type: image
+        image-ref: ${{ inputs.image-ref }}
+        trivy-config: trivy.yaml
+        format: sarif
+        output: trivy-results.sarif
+        limit-severities-for-sarif: true
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      if: always()
+      continue-on-error: true
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: trivy-results.sarif
+        category: ${{ inputs.category }}
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        scan-type: image
+        image-ref: ${{ inputs.image-ref }}
+        trivy-config: trivy.yaml
+        format: table
+        exit-code: '1'
+        skip-setup-trivy: true

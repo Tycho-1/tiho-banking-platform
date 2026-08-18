@@ -6,10 +6,14 @@ on:
     paths:
       - 'src/ledger/balancereader/**'
       - '.github/workflows/balancereader.yml'
+      - '.github/actions/scan-image/**'
+      - 'trivy.yaml'
   pull_request:
     paths:
       - 'src/ledger/balancereader/**'
       - '.github/workflows/balancereader.yml'
+      - '.github/actions/scan-image/**'
+      - 'trivy.yaml'
 
   workflow_dispatch:
 
@@ -24,6 +28,9 @@ env:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v5
 
@@ -41,6 +48,11 @@ jobs:
         # pom needs jib.to.image — Jib requires an explicit target image
         run: mvn -B compile jib:dockerBuild -Djib.to.image=${{ env.SERVICE_NAME }}:ci
         working-directory: ${{ env.SERVICE_PATH }}
+
+      - uses: ./.github/actions/scan-image
+        with:
+          image-ref: ${{ env.SERVICE_NAME }}:ci
+          category: trivy-${{ env.SERVICE_NAME }}
 
   publish:
     needs: ci
