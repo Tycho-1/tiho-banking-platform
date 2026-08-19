@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'src/accounts/contacts/**'
+      - '!src/accounts/contacts/*.md'
+      - '!src/accounts/contacts/**/*.md'
       - '.github/workflows/contacts.yml'
   pull_request:
     paths:
       - 'src/accounts/contacts/**'
+      - '!src/accounts/contacts/*.md'
+      - '!src/accounts/contacts/**/*.md'
       - '.github/workflows/contacts.yml'
 
   workflow_dispatch:

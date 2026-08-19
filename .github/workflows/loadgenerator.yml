@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'src/loadgenerator/**'
+      - '!src/loadgenerator/*.md'
+      - '!src/loadgenerator/**/*.md'
       - '.github/workflows/loadgenerator.yml'
   pull_request:
     paths:
       - 'src/loadgenerator/**'
+      - '!src/loadgenerator/*.md'
+      - '!src/loadgenerator/**/*.md'
       - '.github/workflows/loadgenerator.yml'
 
   workflow_dispatch:

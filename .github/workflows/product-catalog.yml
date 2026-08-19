@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'src/products/**'
+      - '!src/products/*.md'
+      - '!src/products/**/*.md'
       - '.github/workflows/product-catalog.yml'
   pull_request:
     paths:
       - 'src/products/**'
+      - '!src/products/*.md'
+      - '!src/products/**/*.md'
       - '.github/workflows/product-catalog.yml'
 
   workflow_dispatch:

@@ -6,10 +6,14 @@ on:
     branches: [main]
     paths:
       - 'src/accounts/accounts-db/**'
+      - '!src/accounts/accounts-db/*.md'
+      - '!src/accounts/accounts-db/**/*.md'
       - '.github/workflows/accounts-db.yml'
   pull_request:
     paths:
       - 'src/accounts/accounts-db/**'
+      - '!src/accounts/accounts-db/*.md'
+      - '!src/accounts/accounts-db/**/*.md'
       - '.github/workflows/accounts-db.yml'
 
   workflow_dispatch:

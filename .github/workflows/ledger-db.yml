@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'src/ledger/ledger-db/**'
+      - '!src/ledger/ledger-db/*.md'
+      - '!src/ledger/ledger-db/**/*.md'
       - '.github/workflows/ledger-db.yml'
   pull_request:
     paths:
       - 'src/ledger/ledger-db/**'
+      - '!src/ledger/ledger-db/*.md'
+      - '!src/ledger/ledger-db/**/*.md'
       - '.github/workflows/ledger-db.yml'
 
   workflow_dispatch:

@@ -1,6 +1,6 @@
 # GitHub Actions — Tiho Banking Platform
 
-Path-filtered CI per microservice under `src/`. **Build and test run without registry credentials.** JavaScript actions run on Node 24.
+Path-filtered CI per microservice under `src/`. **Build and test run without registry credentials.** JavaScript actions run on Node 24. Markdown under a service path (`README.md`, etc.) does not start that service’s image workflow.
 
 ## Versioning (per-service semver)
 
