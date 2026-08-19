@@ -74,7 +74,10 @@ public class BalanceReaderApplication {
     }
 
     /**
-     * Initializes Meter Registry with custom Stackdriver configuration
+     * Initializes Meter Registry with custom Stackdriver configuration.
+     *
+     * Gated by ENABLE_METRICS (GKE Cloud Monitoring). Prometheus scrape is
+     * separate: micrometer-registry-prometheus + /actuator/prometheus.
      *
      * @return the StackdriverMeterRegistry with configuration
      */

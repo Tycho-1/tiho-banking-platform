@@ -1,24 +1,23 @@
-# Scrape product-catalog /metrics via the existing Service (named port http).
-# ServiceMonitor (not PodMonitor): there is already a ClusterIP Service; Prometheus
-# Operator follows Endpoints. PodMonitor is for pods with no Service (e.g. CNPG).
+# Scrape balancereader Actuator Prometheus endpoint via the existing Service
+# (named port http). Path is Spring's /actuator/prometheus, not Go /metrics.
 #
 # Label release: kube-prometheus-stack matches Prometheus
 # serviceMonitorSelector (Helm default). Change it if the release name differs.
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: product-catalog
+  name: balancereader
   labels:
     application: bank-of-anthos
     environment: development
-    team: products
+    team: ledger
     tier: backend
     release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
-      app: product-catalog
+      app: balancereader
   endpoints:
     - port: http
-      path: /metrics
+      path: /actuator/prometheus
       interval: 15s

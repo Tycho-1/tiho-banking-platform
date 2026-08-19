@@ -1,0 +1,14 @@
+# Keep VERSION in sync with balancereader newTag in this component (Kustomize
+# images: does not rewrite env). Base stays v0.6.9 for upstream/gke-dev.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balancereader
+spec:
+  template:
+    spec:
+      containers:
+        - name: balancereader
+          env:
+            - name: VERSION
+              value: v0.6.10

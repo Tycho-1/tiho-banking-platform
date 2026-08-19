@@ -15,6 +15,7 @@ Implemented in Java with Spring Boot and Guava.
 | `/healthy`              | GET   |       |  Liveness probe endpoint. Monitors health of background thread.         |
 | `/ready`                | GET   |       |  Readiness probe endpoint.                                              |
 | `/version`              | GET   |       |  Returns the contents of `$VERSION`                                     |
+| `/actuator/prometheus`  | GET   |       |  Prometheus scrape (Micrometer). Independent of Stackdriver/`ENABLE_METRICS`. |
 
 ### Environment Variables
 
@@ -32,6 +33,9 @@ Implemented in Java with Spring Boot and Guava.
   - settings for the JVM. Used to obey container memory limits
 - `LOG_LEVEL`
   - service level [log level](https://logging.apache.org/log4j/2.x/manual/customloglevels.html)
+- `ENABLE_METRICS`
+  - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
+  - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.
 
 - ConfigMap `environment-config`:
   - `LOCAL_ROUTING_NUM`
@@ -51,3 +55,4 @@ Implemented in Java with Spring Boot and Guava.
 
 - [deployment/balancereader](../../../deploy/base/balance-reader.yaml)
 - [service/balancereader](../../../deploy/base/balance-reader.yaml)
+- Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-balancereader.yaml) (`/actuator/prometheus`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).

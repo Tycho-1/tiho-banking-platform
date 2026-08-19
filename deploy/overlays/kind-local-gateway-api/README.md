@@ -10,7 +10,7 @@ Bank of Anthos on Kind using **[Kubernetes Gateway API](https://gateway-api.sigs
 | **Container images** | component `use-ghcr-images` → `ghcr.io/tycho-1/tiho-banking-platform/<service>` (same as [`kind-local`](../kind-local/)) |
 | GCP telemetry off | `disable-gcp-telemetry` |
 | Frontend ClusterIP | `frontend-clusterip` |
-| Prometheus scrape | `prometheus-servicemonitors` (product-catalog `/metrics`) |
+| Prometheus scrape | `prometheus-servicemonitors` (product-catalog `/metrics`, balancereader `/actuator/prometheus`) |
 | OTLP traces | `use-otel-otlp` (frontend + product-catalog → Collector) |
 
 ## Why this overlay

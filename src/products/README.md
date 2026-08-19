@@ -81,9 +81,9 @@ Example line after a few requests:
 product_catalog_http_requests_total{method="GET",path="/health",status="200"} 3
 ```
 
-### Kubernetes / Kind
+### Kubernetes
 
-Kind overlays include a **ServiceMonitor** (`deploy/components/prometheus-servicemonitors/`) so kube-prometheus-stack scrapes `product-catalog:8080/metrics`. After apply, wait ~30s then in Grafana Explore:
+Overlays that include **ServiceMonitor** (`deploy/components/prometheus-servicemonitors/`) scrape `product-catalog:8080/metrics` via Prometheus Operator. After apply, wait ~30s then in Grafana Explore:
 
 ```promql
 product_catalog_catalog_products_loaded
