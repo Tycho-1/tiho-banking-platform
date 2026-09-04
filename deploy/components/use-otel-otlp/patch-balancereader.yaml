@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balancereader
+spec:
+  template:
+    spec:
+      containers:
+        - name: balancereader
+          env:
+            - name: ENABLE_TRACING
+              value: "true"
+            - name: OTEL_SERVICE_NAME
+              value: balancereader
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability.svc:4318
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: http/protobuf
+            - name: MANAGEMENT_OTLP_TRACING_ENDPOINT
+              value: http://otel-collector.observability.svc:4318/v1/traces
+            - name: SPRING_CLOUD_GCP_TRACE_ENABLED
+              value: "false"

@@ -11,7 +11,7 @@ Bank of Anthos on Kind using **[Kubernetes Gateway API](https://gateway-api.sigs
 | GCP telemetry off | `disable-gcp-telemetry` |
 | Frontend ClusterIP | `frontend-clusterip` |
 | Prometheus scrape | `prometheus-servicemonitors` (product-catalog `/metrics`, balancereader `/actuator/prometheus`) |
-| OTLP traces | `use-otel-otlp` (frontend + product-catalog → Collector) |
+| OTLP traces | `use-otel-otlp` (frontend, product-catalog, balancereader → Collector) |
 
 ## Why this overlay
 

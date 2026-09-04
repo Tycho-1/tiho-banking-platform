@@ -36,6 +36,12 @@ Implemented in Java with Spring Boot and Guava.
 - `ENABLE_METRICS`
   - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
   - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.
+- `ENABLE_TRACING`
+  - `true` to export traces. On GKE, exports to **Cloud Trace** (`spring.cloud.gcp.trace`). On Kind, `use-otel-otlp` sets OTLP env vars and disables GCP export.
+- `OTEL_SERVICE_NAME` — trace service name (Kind; default `balancereader`)
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — Collector base URL (Kind; e.g. `http://otel-collector.observability.svc:4318`)
+- `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf` on Kind
+- `MANAGEMENT_OTLP_TRACING_ENDPOINT` — full Spring Boot OTLP URL including `/v1/traces` (set by `use-otel-otlp` on Kind)
 
 - ConfigMap `environment-config`:
   - `LOCAL_ROUTING_NUM`
