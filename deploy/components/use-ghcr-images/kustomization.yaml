@@ -25,7 +25,7 @@ images:
     newTag: v0.6.9
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader
     newName: ghcr.io/tycho-1/tiho-banking-platform/balancereader
-    newTag: v0.6.11
+    newTag: v0.6.12
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/ledgerwriter
     newName: ghcr.io/tycho-1/tiho-banking-platform/ledgerwriter
     newTag: v0.6.9

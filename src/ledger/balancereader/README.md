@@ -37,11 +37,18 @@ Implemented in Java with Spring Boot and Guava.
   - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
   - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.
 - `ENABLE_TRACING`
-  - `true` to export traces. On GKE, exports to **Cloud Trace** (`spring.cloud.gcp.trace`). On Kind, `use-otel-otlp` sets OTLP env vars and disables GCP export.
-- `OTEL_SERVICE_NAME` — trace service name (Kind; default `balancereader`)
-- `OTEL_EXPORTER_OTLP_ENDPOINT` — Collector base URL (Kind; e.g. `http://otel-collector.observability.svc:4318`)
-- `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf` on Kind
-- `MANAGEMENT_OTLP_TRACING_ENDPOINT` — full Spring Boot OTLP URL including `/v1/traces` (set by `use-otel-otlp` on Kind)
+  - `true` to export traces via **OTLP** when `MANAGEMENT_OTLP_TRACING_ENDPOINT` is set (`use-otel-otlp` on Kubernetes overlays with a Collector).
+- `OTEL_SERVICE_NAME` — trace service name (default `balancereader`)
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — Collector base URL (e.g. `http://otel-collector.observability.svc:4318`)
+- `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf`
+- `MANAGEMENT_OTLP_TRACING_ENDPOINT` — full Spring Boot OTLP URL including `/v1/traces` (set by `use-otel-otlp`)
+- `SPRING_CLOUD_GCP_TRACE_ENABLED` — set `false` by `use-otel-otlp` on Kubernetes (see **Tracing** below)
+
+### Tracing
+
+**Platform direction: OTLP everywhere** on Kubernetes (Collector → Jaeger/Tempo). Configure per overlay with [`use-otel-otlp`](../../../deploy/components/use-otel-otlp/).
+
+`pom.xml` still includes `spring-cloud-gcp-starter-trace` from the Bank of Anthos fork, but **`micrometer-tracing-bridge-brave` is excluded** so Spring Boot 3.5 can use the OpenTelemetry bridge only (Brave + OTel on the classpath both register a propagator and the app fails to start). **Cloud Trace via that starter is not active** with the current build; export is OTLP when the endpoint env vars are set. The GCP trace starter is kept for now; remove it in a later cleanup once all overlays use OTLP. Bridge choice is **build-time** (image), not an env toggle.
 
 - ConfigMap `environment-config`:
   - `LOCAL_ROUTING_NUM`

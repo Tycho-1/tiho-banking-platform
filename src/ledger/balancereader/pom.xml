@@ -91,6 +91,15 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>spring-cloud-gcp-starter-trace</artifactId>
+            <exclusions>
+                <!-- Kept from BoA fork; export is OTLP (OTel bridge below). Brave excluded:
+                     Boot 3.5 cannot load brave + otel propagators in one image (not env-toggleable).
+                     Cloud Trace via this starter is inactive; remove starter in a later cleanup. -->
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-tracing-bridge-brave</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>

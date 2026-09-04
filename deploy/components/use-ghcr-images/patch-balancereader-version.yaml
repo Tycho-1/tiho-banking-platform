@@ -11,4 +11,4 @@ spec:
         - name: balancereader
           env:
             - name: VERSION
-              value: v0.6.11
+              value: v0.6.12

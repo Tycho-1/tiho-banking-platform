@@ -1,10 +1,10 @@
-# OTLP traces to the platform Collector (Kind)
+# OTLP traces to the platform Collector (Kubernetes)
 
-Turns tracing **on** for **frontend** and **product-catalog**, pointing at the Kind OpenTelemetry Collector over **OTLP HTTP**.
+Turns tracing **on** for **frontend**, **product-catalog**, and **balancereader**, pointing at the platform OpenTelemetry Collector over **OTLP HTTP**.
 
-`disable-gcp-telemetry` sets `ENABLE_TRACING=false` (no Cloud Trace on Kind). This component runs **after** that and sets `ENABLE_TRACING=true` plus `OTEL_EXPORTER_OTLP_ENDPOINT`.
+`disable-gcp-telemetry` sets `ENABLE_TRACING=false` (no legacy GCP trace push on local overlays). This component runs **after** that and sets `ENABLE_TRACING=true` plus `OTEL_EXPORTER_OTLP_ENDPOINT`.
 
-**Not on `gke-dev`.** That overlay does not set `OTEL_EXPORTER_OTLP_ENDPOINT`. Frontend then uses **Cloud Trace** (when `ENABLE_TRACING=true`). Product-catalog has no Cloud Trace exporter — Go tracing stays off without an OTLP endpoint.
+**Not on `gke-dev` yet.** That overlay does not set `OTEL_EXPORTER_OTLP_ENDPOINT`. Frontend still falls back to **Cloud Trace** when `ENABLE_TRACING=true`. Product-catalog and balancereader need an OTLP endpoint to export (balancereader uses Micrometer OTel only — see [balancereader README](../../../src/ledger/balancereader/README.md#tracing)).
 
 ## Prerequisites (platform)
 
