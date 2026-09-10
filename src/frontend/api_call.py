@@ -14,8 +14,12 @@
 
 """API calls"""
 
+import time
+
 from requests import get
 from requests.exceptions import RequestException
+
+from metrics import record_backend_call, resolve_backend_service
 
 
 class ApiRequest:
@@ -40,12 +44,18 @@ class ApiCall:
     def make_call(self):
         """Making an API call"""
         response = None
+        service = resolve_backend_service(self.display_name)
+        start = time.perf_counter()
 
         try:
             response = get(url=self.api_request.url,
                            headers=self.api_request.headers,
                            timeout=self.api_request.timeout)
+            record_backend_call(
+                service, response.status_code, time.perf_counter() - start
+            )
         except (RequestException, ValueError) as err:
+            record_backend_call(service, "error", time.perf_counter() - start)
             self.logger.error('Error getting %s: %s',
                               self.display_name, str(err))
 

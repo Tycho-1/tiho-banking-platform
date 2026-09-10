@@ -7,3 +7,4 @@ resources:
   - servicemonitor-product-catalog.yaml
   - servicemonitor-balancereader.yaml
   - servicemonitor-transactionhistory.yaml
+  - servicemonitor-frontend.yaml

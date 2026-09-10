@@ -49,6 +49,7 @@ from opentelemetry.instrumentation.jinja2 import Jinja2Instrumentor
 # Local imports
 from api_call import ApiCall, ApiRequest
 from traced_thread_pool_executor import TracedThreadPoolExecutor
+from metrics import init_metrics, backend_get, backend_post
 
 # Local constants
 BALANCE_NAME = "balance"
@@ -86,7 +87,9 @@ def _setup_tracing(app):
         set_global_textmap(CloudTraceFormatPropagator())
 
     provider.add_span_processor(BatchSpanProcessor(exporter))
-    FlaskInstrumentor().instrument_app(app, excluded_urls="/ready")
+    FlaskInstrumentor().instrument_app(
+        app, excluded_urls="/ready,/metrics,/version"
+    )
     RequestsInstrumentor().instrument()
     Jinja2Instrumentor().instrument()
 
@@ -232,9 +235,12 @@ def create_app():
 
         products_list = []
         try:
-            resp = requests.get(url=products_url,
-                                headers=hed,
-                                timeout=app.config['BACKEND_TIMEOUT'])
+            resp = backend_get(
+                "product-catalog",
+                url=products_url,
+                headers=hed,
+                timeout=app.config['BACKEND_TIMEOUT'],
+            )
             if resp.ok:
                 products_list = resp.json().get('products', [])
             else:
@@ -415,10 +421,13 @@ def create_app():
         token = request.cookies.get(app.config['TOKEN_NAME'])
         hed = {'Authorization': 'Bearer ' + token,
                'content-type': 'application/json'}
-        resp = requests.post(url=app.config["TRANSACTIONS_URI"],
-                             data=jsonify(transaction_data).data,
-                             headers=hed,
-                             timeout=app.config['BACKEND_TIMEOUT'])
+        resp = backend_post(
+            "ledgerwriter",
+            url=app.config["TRANSACTIONS_URI"],
+            data=jsonify(transaction_data).data,
+            headers=hed,
+            timeout=app.config['BACKEND_TIMEOUT'],
+        )
         try:
             resp.raise_for_status()  # Raise on HTTP Status code 4XX or 5XX
         except requests.exceptions.HTTPError as http_request_err:
@@ -445,10 +454,13 @@ def create_app():
         }
         token_data = decode_token(token)
         url = '{}/{}'.format(app.config["CONTACTS_URI"], token_data['user'])
-        resp = requests.post(url=url,
-                             data=jsonify(contact_data).data,
-                             headers=hed,
-                             timeout=app.config['BACKEND_TIMEOUT'])
+        resp = backend_post(
+            "contacts",
+            url=url,
+            data=jsonify(contact_data).data,
+            headers=hed,
+            timeout=app.config['BACKEND_TIMEOUT'],
+        )
         try:
             resp.raise_for_status()  # Raise on HTTP Status code 4XX or 5XX
         except requests.exceptions.HTTPError as http_request_err:
@@ -526,9 +538,12 @@ def create_app():
     def _login_helper(username, password, request_args):
         try:
             app.logger.debug('Logging in.')
-            req = requests.get(url=app.config["LOGIN_URI"],
-                               params={'username': username, 'password': password},
-                               timeout=app.config['BACKEND_TIMEOUT']*2)
+            req = backend_get(
+                "userservice",
+                url=app.config["LOGIN_URI"],
+                params={'username': username, 'password': password},
+                timeout=app.config['BACKEND_TIMEOUT']*2,
+            )
             req.raise_for_status()  # Raise on HTTP Status code 4XX or 5XX
 
             # login success
@@ -668,9 +683,12 @@ def create_app():
         try:
             # create user
             app.logger.debug('Creating new user.')
-            resp = requests.post(url=app.config["USERSERVICE_URI"],
-                                 data=request.form,
-                                 timeout=app.config['BACKEND_TIMEOUT'])
+            resp = backend_post(
+                "userservice",
+                url=app.config["USERSERVICE_URI"],
+                data=request.form,
+                timeout=app.config['BACKEND_TIMEOUT'],
+            )
             if resp.status_code == 201:
                 # user created. Attempt login
                 app.logger.info('New user created.')
@@ -807,6 +825,8 @@ def create_app():
     app.logger.handlers = logging.getLogger('gunicorn.error').handlers
     app.logger.setLevel(logging.getLogger('gunicorn.error').level)
     app.logger.info('Starting frontend service.')
+
+    init_metrics(app)
 
     # Tracing: OTLP (Kind) when OTEL_EXPORTER_OTLP_ENDPOINT is set, else Cloud Trace (GKE).
     _setup_tracing(app)

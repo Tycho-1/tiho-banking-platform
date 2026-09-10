@@ -11,4 +11,4 @@ spec:
         - name: front
           env:
             - name: VERSION
-              value: v0.6.12
+              value: v0.6.13
