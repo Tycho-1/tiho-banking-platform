@@ -33,10 +33,48 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.propagate import set_global_textmap
 from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.propagators.composite import CompositePropagator
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from opentelemetry.propagators.cloud_trace_propagator import CloudTraceFormatPropagator
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from db import ContactsDb
+
+
+def _setup_tracing(app):
+    """Wire OpenTelemetry traces: OTLP to the Collector, or Cloud Trace on GKE."""
+    if os.environ.get("ENABLE_TRACING") != "true":
+        app.logger.info("🚫 Tracing disabled.")
+        return
+
+    service_name = os.environ.get("OTEL_SERVICE_NAME", "contacts")
+    provider = TracerProvider(
+        resource=Resource.create({"service.name": service_name})
+    )
+    trace.set_tracer_provider(provider)
+
+    endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "").strip()
+    if endpoint:
+        app.logger.info(
+            "✅ Tracing enabled (OTLP) endpoint=%s service=%s",
+            endpoint,
+            service_name,
+        )
+        exporter = OTLPSpanExporter()
+        set_global_textmap(CompositePropagator([
+            TraceContextTextMapPropagator(),
+            W3CBaggagePropagator(),
+        ]))
+    else:
+        app.logger.info("✅ Tracing enabled (Cloud Trace).")
+        exporter = CloudTraceSpanExporter()
+        set_global_textmap(CloudTraceFormatPropagator())
+
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    FlaskInstrumentor().instrument_app(app, excluded_urls="/ready")
 
 
 def create_app():
@@ -196,19 +234,7 @@ def create_app():
     app.logger.setLevel(logging.getLogger("gunicorn.error").level)
     app.logger.info("Starting contacts service.")
 
-    # Set up tracing and export spans to Cloud Trace.
-    if os.environ['ENABLE_TRACING'] == "true":
-        app.logger.info("✅ Tracing enabled.")
-        # Set up tracing and export spans to Cloud Trace
-        trace.set_tracer_provider(TracerProvider())
-        cloud_trace_exporter = CloudTraceSpanExporter()
-        trace.get_tracer_provider().add_span_processor(
-            BatchSpanProcessor(cloud_trace_exporter)
-        )
-        set_global_textmap(CloudTraceFormatPropagator())
-        FlaskInstrumentor().instrument_app(app)
-    else:
-        app.logger.info("🚫 Tracing disabled.")
+    _setup_tracing(app)
 
     # setup global variables
     app.config["VERSION"] = os.environ.get("VERSION")
