@@ -10,6 +10,7 @@ Tells **Prometheus Operator** to scrape app metrics. Kubernetes pattern: Service
 |---------|------|
 | product-catalog | `/metrics` |
 | balancereader | `/actuator/prometheus` (Spring Actuator) |
+| transactionhistory | `/actuator/prometheus` (Spring Actuator) |
 
 ## Prerequisites
 
@@ -28,7 +29,8 @@ product_catalog_catalog_products_loaded
 {__name__=~"product_catalog_.*"}
 sum by (path, status) (rate(product_catalog_http_requests_total[5m]))
 
-# Java / Spring (balancereader) — JVM + HTTP; Guava cache as cache_*
+# Java / Spring (balancereader, transactionhistory) — JVM + HTTP; Guava cache as cache_*
 jvm_memory_used_bytes{job="balancereader"}
 http_server_requests_seconds_count{job="balancereader"}
+rate(http_server_requests_seconds_count{job="transactionhistory"}[5m])
 ```

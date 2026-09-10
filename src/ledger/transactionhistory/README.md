@@ -15,6 +15,7 @@ Implemented in Java with Spring Boot and Guava.
 | `/ready`                    | GET   |       |  Readiness probe endpoint.                                                    |
 | `/transactions/<accountid>` | GET   | 🔒    |  Return the account transaction list iff authenticated to access the account. |
 | `/version`                  | GET   |       |  Returns the contents of `$VERSION`                                           |
+| `/actuator/prometheus`      | GET   |       |  Prometheus scrape (Micrometer). Independent of Stackdriver/`ENABLE_METRICS`. |
 
 ### Environment Variables
 
@@ -40,6 +41,9 @@ Implemented in Java with Spring Boot and Guava.
   - add fake extra latency in milliseconds to transaction history requests
 - `LOG_LEVEL`
   - service level [log level](https://logging.apache.org/log4j/2.x/manual/customloglevels.html)
+- `ENABLE_METRICS`
+  - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
+  - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.
 
 - ConfigMap `environment-config`:
   - `LOCAL_ROUTING_NUM`
@@ -59,3 +63,4 @@ Implemented in Java with Spring Boot and Guava.
 
 - [deployment/transactionhistory](../../../deploy/base/transaction-history.yaml)
 - [service/transactionhistory](../../../deploy/base/transaction-history.yaml)
+- Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-transactionhistory.yaml) (`/actuator/prometheus`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).
