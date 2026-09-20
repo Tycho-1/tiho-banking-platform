@@ -9,12 +9,16 @@ on:
       - '!src/accounts/accounts-db/*.md'
       - '!src/accounts/accounts-db/**/*.md'
       - '.github/workflows/accounts-db.yml'
+      - '.github/actions/scan-image/**'
+      - 'trivy.yaml'
   pull_request:
     paths:
       - 'src/accounts/accounts-db/**'
       - '!src/accounts/accounts-db/*.md'
       - '!src/accounts/accounts-db/**/*.md'
       - '.github/workflows/accounts-db.yml'
+      - '.github/actions/scan-image/**'
+      - 'trivy.yaml'
 
   workflow_dispatch:
 
@@ -29,6 +33,9 @@ env:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v5
 
@@ -37,7 +44,13 @@ jobs:
         with:
           context: ${{ env.SERVICE_PATH }}
           push: false
+          load: true
           tags: ${{ env.SERVICE_NAME }}:ci
+
+      - uses: ./.github/actions/scan-image
+        with:
+          image-ref: ${{ env.SERVICE_NAME }}:ci
+          category: trivy-${{ env.SERVICE_NAME }}
 
   publish:
     needs: ci

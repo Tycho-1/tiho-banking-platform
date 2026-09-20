@@ -1,0 +1,20 @@
+# Shared Trivy policy for image scans (CI + local).
+# Scan target, format, and exit-code stay on the Action step — they differ per invocation.
+#
+# Local: trivy image --config trivy.yaml frontend:ci
+
+severity:
+  - HIGH
+  - CRITICAL
+
+vulnerability:
+  ignore-unfixed: true
+
+pkg:
+  types:
+    - os
+    - library
+
+scan:
+  scanners:
+    - vuln
