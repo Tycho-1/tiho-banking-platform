@@ -11,6 +11,7 @@ Implemented in Java with Spring Boot.
 | `/ready`           | GET   |       |  Readiness probe endpoint.                           |
 | `/transactions`    | POST  | 🔒    |  Submits a transaction to be appended to the ledger. |
 | `/version`         | GET   |       |  Returns the contents of `$VERSION`                  |
+| `/actuator/prometheus` | GET |    |  Prometheus scrape (Micrometer). Independent of Stackdriver/`ENABLE_METRICS`. |
 
 ### Environment Variables
 
@@ -22,6 +23,9 @@ Implemented in Java with Spring Boot.
   - settings for the JVM. Used to obey container memory limits
 - `LOG_LEVEL`
   - the service-wide [log level](https://logging.apache.org/log4j/2.x/manual/customloglevels.html) (default: INFO)
+- `ENABLE_METRICS`
+  - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
+  - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.
   
 - ConfigMap `environment-config`:
   - `LOCAL_ROUTING_NUM`
@@ -45,3 +49,4 @@ Implemented in Java with Spring Boot.
 
 - [deployment/ledgerwriter](../../../deploy/base/ledger-writer.yaml)
 - [service/ledgerwriter](../../../deploy/base/ledger-writer.yaml)
+- Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-ledgerwriter.yaml) (`/actuator/prometheus`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).
