@@ -1,6 +1,6 @@
 # OTLP traces to the platform Collector (Kubernetes)
 
-Turns tracing **on** for **frontend**, **product-catalog**, and **balancereader**, pointing at the platform OpenTelemetry Collector over **OTLP HTTP**.
+Turns tracing **on** for **frontend**, **product-catalog**, **balancereader**, **transactionhistory**, **ledgerwriter**, and **contacts**, pointing at the platform OpenTelemetry Collector over **OTLP HTTP**.
 
 `disable-gcp-telemetry` sets `ENABLE_TRACING=false` (no legacy GCP trace push on local overlays). This component runs **after** that and sets `ENABLE_TRACING=true` plus `OTEL_EXPORTER_OTLP_ENDPOINT`.
 
