@@ -46,10 +46,21 @@ Upstream BoA images remain `v0.6.9` until you opt into GHCR for a given service.
 | `loadgenerator.yml` | `src/loadgenerator/` | — | Docker |
 | `accounts-db.yml` | `src/accounts/accounts-db/` | — | Docker |
 | `ledger-db.yml` | `src/ledger/ledger-db/` | — | Docker |
+| `product-catalog.yml` | `src/products/` | Go test + vet | Docker |
 | `balancereader.yml` | `src/ledger/balancereader/` | Maven test (Java 17) | Jib → Docker |
 | `ledgerwriter.yml` | `src/ledger/ledgerwriter/` | Maven test (Java 17) | Jib → Docker |
 | `transactionhistory.yml` | `src/ledger/transactionhistory/` | Maven test (Java 17) | Jib → Docker |
 | `deploy-validate.yml` | `deploy/` | — | `kubectl kustomize` all five overlays |
+
+## Container scan (Trivy)
+
+After each service builds `<service>:ci`, CI runs an **image** scan (no filesystem scan). Policy lives in repo-root [`trivy.yaml`](../../trivy.yaml); the reusable steps are [`.github/actions/scan-image`](../actions/scan-image/action.yml).
+
+- Fail the `ci` job on **HIGH/CRITICAL** with an upstream fix (`ignore-unfixed: true`)
+- Upload SARIF (per-service `category`) when Code Scanning is available
+- Changing `trivy.yaml` or the scan action retriggers every image workflow
+
+`publish` already `needs: ci`, so a failed scan blocks GHCR.
 
 ## Image push (optional — off by default)
 
