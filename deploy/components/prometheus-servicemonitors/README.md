@@ -12,6 +12,7 @@ Tells **Prometheus Operator** to scrape app metrics. Kubernetes pattern: Service
 | balancereader | `/actuator/prometheus` (Spring Actuator) |
 | transactionhistory | `/actuator/prometheus` (Spring Actuator) |
 | ledgerwriter | `/actuator/prometheus` (Spring Actuator) |
+| contacts | `/metrics` |
 
 ## Prerequisites
 
@@ -34,4 +35,7 @@ sum by (path, status) (rate(product_catalog_http_requests_total[5m]))
 jvm_memory_used_bytes{job="balancereader"}
 http_server_requests_seconds_count{job="balancereader"}
 rate(http_server_requests_seconds_count{job="transactionhistory"}[5m])
+
+# Python contacts
+sum(rate(contacts_http_requests_total{job="contacts"}[5m]))
 ```

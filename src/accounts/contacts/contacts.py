@@ -42,6 +42,7 @@ from opentelemetry.propagators.cloud_trace_propagator import CloudTraceFormatPro
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from db import ContactsDb
+from metrics import init_metrics
 
 
 def _setup_tracing(app):
@@ -74,7 +75,7 @@ def _setup_tracing(app):
         set_global_textmap(CloudTraceFormatPropagator())
 
     provider.add_span_processor(BatchSpanProcessor(exporter))
-    FlaskInstrumentor().instrument_app(app, excluded_urls="/ready")
+    FlaskInstrumentor().instrument_app(app, excluded_urls="/ready,/metrics")
 
 
 def create_app():
@@ -235,6 +236,7 @@ def create_app():
     app.logger.info("Starting contacts service.")
 
     _setup_tracing(app)
+    init_metrics(app)
 
     # setup global variables
     app.config["VERSION"] = os.environ.get("VERSION")

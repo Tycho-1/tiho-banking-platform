@@ -76,6 +76,14 @@ class TestContacts(unittest.TestCase):
                     # mock return value of get_contacts to return empty
                     self.mocked_db.return_value.get_contacts.return_value = []
 
+    def test_metrics_endpoint_exposes_request_counter(self):
+        """Prometheus scrape includes the contacts HTTP counter."""
+        version = self.test_app.get("/version")
+        self.assertEqual(version.status_code, 200)
+        response = self.test_app.get("/metrics")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"contacts_http_requests_total", response.data)
+
     def test_version_endpoint_returns_200_status_code_correct_version(self):
         """test if correct version is returned"""
         # generate a version

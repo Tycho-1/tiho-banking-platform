@@ -13,6 +13,7 @@ Implemented in Python with Flask.
 | `/contacts/<username>`  | POST  | 🔒    |  Add a new saved account for the authenticated user.               |
 | `/ready`                | GET   |       |  Readiness probe endpoint.                                         |
 | `/version`              | GET   |       |  Returns the contents of `$VERSION`                                |
+| `/metrics`              | GET   |       |  Prometheus scrape (prometheus_client).                            |
 
 
 ### Environment Variables
@@ -38,3 +39,4 @@ Implemented in Python with Flask.
 
 - [deployment/contacts](../../../deploy/base/contacts.yaml)
 - [service/contacts](../../../deploy/base/contacts.yaml)
+- Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-contacts.yaml) (`/metrics`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).
