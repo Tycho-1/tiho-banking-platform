@@ -57,7 +57,7 @@
       }
     ]
   },
-  "description": "Test dashboard for metrics this repo already exposes: Spring Actuator (balancereader, transactionhistory, ledgerwriter), frontend, and product-catalog. Traces stay in Jaeger. Logs are not included.",
+  "description": "Test dashboard for metrics this repo already exposes: Spring Actuator (balancereader, transactionhistory, ledgerwriter), frontend, contacts, and product-catalog. Traces stay in Jaeger. Logs are not included.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -82,7 +82,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "Metrics from this repo only. **Traces** stay in Jaeger. **Logs** are stdout on the pods and are not on this dashboard.\n\nServices: `frontend` (`/metrics`), `product-catalog` (`/metrics`), `balancereader`, `transactionhistory`, `ledgerwriter` (`/actuator/prometheus`).\n\nThe **job** variable matches either `ledgerwriter` or `namespace/ledgerwriter`. If every panel is empty, Prometheus is not scraping these ServiceMonitors yet. Java latency is an average (`_sum / _count`); Spring does not publish histogram buckets in this repo.",
+        "content": "Metrics from this repo only. **Traces** stay in Jaeger. **Logs** are stdout on the pods and are not on this dashboard.\n\nServices: `frontend` (`/metrics`), `contacts` (`/metrics`), `product-catalog` (`/metrics`), `balancereader`, `transactionhistory`, `ledgerwriter` (`/actuator/prometheus`).\n\nThe **job** variable matches either `ledgerwriter` or `namespace/ledgerwriter`. If every panel is empty, Prometheus is not scraping these ServiceMonitors yet. Java latency is an average (`_sum / _count`); Spring does not publish histogram buckets in this repo.",
         "mode": "markdown"
       },
       "pluginVersion": "10.0.0",
@@ -1227,6 +1227,132 @@
       ],
       "title": "Go goroutines",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "id": 40,
+      "panels": [],
+      "title": "Contacts",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "contacts_http_requests_total from src/accounts/contacts/metrics.py. /metrics, /ready, and /version are not counted.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineInterpolation": "linear",
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 77
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (endpoint, status) (rate(contacts_http_requests_total{job=~\"${job:regex}\"}[5m]))",
+          "legendFormat": "{{endpoint}} {{status}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Inbound request rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "contacts_http_request_duration_seconds histogram, buckets defined in metrics.py.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineInterpolation": "linear",
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 77
+      },
+      "id": 42,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(contacts_http_request_duration_seconds_bucket{job=~\"${job:regex}\"}[5m])))",
+          "legendFormat": "{{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Inbound latency p95",
+      "type": "timeseries"
     }
   ],
   "refresh": "30s",
@@ -1239,7 +1365,7 @@
   "templating": {
     "list": [
       {
-        "allValue": ".*(frontend|product-catalog|balancereader|transactionhistory|ledgerwriter).*",
+        "allValue": ".*(frontend|contacts|product-catalog|balancereader|transactionhistory|ledgerwriter).*",
         "current": {
           "selected": true,
           "text": "All",
@@ -1249,7 +1375,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values({__name__=~\"http_server_requests_seconds_count|frontend_http_requests_total|product_catalog_http_requests_total\"}, job)",
+        "definition": "label_values({__name__=~\"http_server_requests_seconds_count|frontend_http_requests_total|contacts_http_requests_total|product_catalog_http_requests_total\"}, job)",
         "hide": 0,
         "includeAll": true,
         "label": "job",
@@ -1258,11 +1384,11 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({__name__=~\"http_server_requests_seconds_count|frontend_http_requests_total|product_catalog_http_requests_total\"}, job)",
+          "query": "label_values({__name__=~\"http_server_requests_seconds_count|frontend_http_requests_total|contacts_http_requests_total|product_catalog_http_requests_total\"}, job)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
-        "regex": "/.*(frontend|product-catalog|balancereader|transactionhistory|ledgerwriter).*/",
+        "regex": "/.*(frontend|contacts|product-catalog|balancereader|transactionhistory|ledgerwriter).*/",
         "sort": 1,
         "type": "query"
       }

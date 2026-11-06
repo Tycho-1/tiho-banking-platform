@@ -9,3 +9,4 @@ resources:
   - servicemonitor-transactionhistory.yaml
   - servicemonitor-ledgerwriter.yaml
   - servicemonitor-frontend.yaml
+  - servicemonitor-contacts.yaml
