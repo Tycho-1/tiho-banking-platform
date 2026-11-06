@@ -20,3 +20,11 @@ TODO: wrap this JSON in a ConfigMap that the Kind Grafana sidecar watches, and i
 The **job** variable matches either `ledgerwriter` or `namespace/ledgerwriter`, and the same pattern for the other services above.
 
 Traces stay in Jaeger. Pod logs are not in this JSON.
+
+## Traces dashboard
+
+`banking-platform-traces.json` charts collector span metrics for the same app services: server-span call rate, error rate, and p95 latency. Import it the same way and pick the same Prometheus datasource.
+
+These series follow the trace sample rate. A single trace is still opened in Grafana Explore on the Jaeger datasource `webstore-traces` (Search), or in the Jaeger UI.
+
+`product-catalog` can mix with the webstore demo when both emit that service name. Other webstore jobs are filtered out.
