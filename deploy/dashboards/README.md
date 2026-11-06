@@ -20,6 +20,14 @@ The **job** variable matches either `ledgerwriter` or `namespace/ledgerwriter`, 
 
 Traces stay in Jaeger. Pod logs are in `banking-platform-logs.json`.
 
+## Traces dashboard
+
+`banking-platform-traces.json` charts collector span metrics for the same app services: server-span call rate, error rate, and p95 latency. Import it the same way and pick the same Prometheus datasource.
+
+These series follow the trace sample rate. A single trace is still opened in Grafana Explore on the Jaeger datasource `webstore-traces` (Search), or in the Jaeger UI.
+
+`product-catalog` can mix with the webstore demo when both emit that service name. Other webstore jobs are filtered out.
+
 ## Logs dashboard
 
 `banking-platform-logs.json` shows pod logs for the same seven app services. Import it the same way and pick the Loki datasource (`Loki` or `webstore-logs`).
