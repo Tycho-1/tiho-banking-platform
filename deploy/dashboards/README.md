@@ -18,4 +18,10 @@ TODO: wrap this JSON in a ConfigMap that the Kind Grafana sidecar watches, and i
 
 The **job** variable matches either `ledgerwriter` or `namespace/ledgerwriter`, and the same pattern for the other services above.
 
-Traces stay in Jaeger. Pod logs are not in this JSON.
+Traces stay in Jaeger. Pod logs are in `banking-platform-logs.json`.
+
+## Logs dashboard
+
+`banking-platform-logs.json` shows pod logs for the same seven app services. Import it the same way and pick the Loki datasource (`Loki` or `webstore-logs`).
+
+The queries use `namespace="banking-platform"` and `service_name`. Promtail already writes those labels, so the panels can show lines before the OTel log images are deployed. OTel export is a second copy of the application lines and is not what these panels count.

@@ -16,13 +16,13 @@ kind: Component
 images:
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
     newName: ghcr.io/tycho-1/tiho-banking-platform/frontend
-    newTag: v0.6.13
+    newTag: v0.6.14
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice
     newName: ghcr.io/tycho-1/tiho-banking-platform/userservice
-    newTag: v0.6.10
+    newTag: v0.6.11
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts
     newName: ghcr.io/tycho-1/tiho-banking-platform/contacts
-    newTag: v0.6.11
+    newTag: v0.6.12
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/balancereader
     newName: ghcr.io/tycho-1/tiho-banking-platform/balancereader
     newTag: v0.6.12

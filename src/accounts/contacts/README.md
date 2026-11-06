@@ -40,3 +40,4 @@ Implemented in Python with Flask.
 - [deployment/contacts](../../../deploy/base/contacts.yaml)
 - [service/contacts](../../../deploy/base/contacts.yaml)
 - Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-contacts.yaml) (`/metrics`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).
+- Kind logs: the same `OTEL_EXPORTER_OTLP_ENDPOINT` exports application logs. `gke-dev` keeps stdout.
