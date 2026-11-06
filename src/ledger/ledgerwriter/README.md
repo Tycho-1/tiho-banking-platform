@@ -23,6 +23,8 @@ Implemented in Java with Spring Boot.
   - settings for the JVM. Used to obey container memory limits
 - `LOG_LEVEL`
   - the service-wide [log level](https://logging.apache.org/log4j/2.x/manual/customloglevels.html) (default: INFO)
+- `OTEL_EXPORTER_OTLP_ENDPOINT`
+  - when set (Kind `use-otel-otlp`), Log4j2 also exports application logs to the Collector. Stdout stays. `gke-dev` leaves this unset.
 - `ENABLE_METRICS`
   - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
   - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.

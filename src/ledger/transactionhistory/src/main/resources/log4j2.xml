@@ -15,12 +15,13 @@
  limitations under the License.
 -->
 
-<Configuration status="WARN">
+<Configuration status="WARN" packages="io.opentelemetry.instrumentation.log4j.appender.v2_17">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout
               pattern='{"timestamp": "%d{yyyy-MM-dd HH:mm:ss}", "message": "%M | %msg", "severity": "%level"}%n' />
         </Console>
+        <OpenTelemetry name="OpenTelemetry"/>
     </Appenders>
     <Loggers>
         <Logger name="org.hibernate" level="WARN" additivity="false">
@@ -28,6 +29,7 @@
         </Logger>
         <Root level="${env:LOG_LEVEL:-INFO}" additivity="false">
             <AppenderRef ref="console" />
+            <AppenderRef ref="OpenTelemetry" />
         </Root>
     </Loggers>
 </Configuration>
