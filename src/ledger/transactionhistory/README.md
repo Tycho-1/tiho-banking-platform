@@ -41,6 +41,8 @@ Implemented in Java with Spring Boot and Guava.
   - add fake extra latency in milliseconds to transaction history requests
 - `LOG_LEVEL`
   - service level [log level](https://logging.apache.org/log4j/2.x/manual/customloglevels.html)
+- `OTEL_EXPORTER_OTLP_ENDPOINT`
+  - when set (Kind `use-otel-otlp`), Log4j2 also exports application logs to the Collector. Stdout stays. `gke-dev` leaves this unset.
 - `ENABLE_METRICS`
   - `true` to **push** Micrometer metrics to GCP Cloud Monitoring (Stackdriver). Non-GKE overlays (`disable-gcp-telemetry`) set `false`.
   - Prometheus scrape at `/actuator/prometheus` is always on (pull); it does not use this flag.

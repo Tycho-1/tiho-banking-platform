@@ -39,7 +39,7 @@ Implemented in Java with Spring Boot and Guava.
 - `ENABLE_TRACING`
   - `true` to export traces via **OTLP** when `MANAGEMENT_OTLP_TRACING_ENDPOINT` is set (`use-otel-otlp` on Kubernetes overlays with a Collector).
 - `OTEL_SERVICE_NAME` — trace service name (default `balancereader`)
-- `OTEL_EXPORTER_OTLP_ENDPOINT` — Collector base URL (e.g. `http://otel-collector.observability.svc:4318`)
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — Collector base URL (e.g. `http://otel-collector.observability.svc:4318`). When set, Log4j2 also exports application logs there. Stdout stays. `gke-dev` leaves this unset.
 - `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf`
 - `MANAGEMENT_OTLP_TRACING_ENDPOINT` — full Spring Boot OTLP URL including `/v1/traces` (set by `use-otel-otlp`)
 - `SPRING_CLOUD_GCP_TRACE_ENABLED` — set `false` by `use-otel-otlp` on Kubernetes (see **Tracing** below)
