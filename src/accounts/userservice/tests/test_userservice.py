@@ -66,6 +66,15 @@ class TestUserservice(unittest.TestCase):
                     # create test client
                     self.test_app = self.flask_app.test_client()
 
+    def test_metrics_endpoint_exposes_request_counter(self):
+        """Prometheus scrape includes the userservice HTTP counter."""
+        self.mocked_db.return_value.get_user.return_value = None
+        login = self.test_app.get('/login?username=testuser&password=secret')
+        self.assertEqual(login.status_code, 404)
+        response = self.test_app.get('/metrics')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'userservice_http_requests_total', response.data)
+
     def test_version_endpoint_returns_200_status_code_correct_version(self):
         """test if correct version is returned"""
         # generate a version

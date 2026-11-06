@@ -10,3 +10,4 @@ resources:
   - servicemonitor-ledgerwriter.yaml
   - servicemonitor-frontend.yaml
   - servicemonitor-contacts.yaml
+  - servicemonitor-userservice.yaml

@@ -19,7 +19,7 @@ images:
     newTag: v0.6.13
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/userservice
     newName: ghcr.io/tycho-1/tiho-banking-platform/userservice
-    newTag: v0.6.9
+    newTag: v0.6.10
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/contacts
     newName: ghcr.io/tycho-1/tiho-banking-platform/contacts
     newTag: v0.6.11
@@ -50,4 +50,5 @@ patches:
   - path: patch-transactionhistory-version.yaml
   - path: patch-ledgerwriter-version.yaml
   - path: patch-contacts-version.yaml
+  - path: patch-userservice-version.yaml
 

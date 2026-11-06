@@ -1,0 +1,22 @@
+# Scrape userservice /metrics via the existing Service (named port http).
+#
+# Label release: kube-prometheus-stack matches Prometheus
+# serviceMonitorSelector (Helm default). Change it if the release name differs.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: userservice
+  labels:
+    application: bank-of-anthos
+    environment: development
+    team: accounts
+    tier: backend
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: userservice
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
