@@ -64,7 +64,7 @@ Prometheus **pulls** metrics from your app; the app does not push to Grafana.
 | `product_catalog_catalog_products_loaded` | Gauge | — | Products loaded from JSON at startup |
 | `go_*`, `process_*` | — | — | Go runtime + process metrics (via collectors) |
 
-Implementation: `metrics.go` (Prometheus) and `tracing.go` (OTLP spans). HTTP wrappers sit around the mux; `handleProducts` does not call the tracing API.
+Implementation: `metrics.go` (Prometheus), `tracing.go` (OTLP spans), and `logs.go` (OTLP logs). HTTP wrappers sit around the mux; `handleProducts` does not call the tracing API.
 
 ### Local check
 
@@ -92,7 +92,7 @@ product_catalog_catalog_products_loaded
 
 ### OpenTelemetry traces
 
-When `OTEL_EXPORTER_OTLP_ENDPOINT` is set (Kind component `use-otel-otlp`), the service **pushes** traces to the platform Collector over OTLP HTTP. Prometheus `/metrics` scrape is unchanged.
+When `OTEL_EXPORTER_OTLP_ENDPOINT` is set (Kind component `use-otel-otlp`), the service **pushes** traces and application logs to the platform Collector over OTLP HTTP. Stdout logging stays. Prometheus `/metrics` scrape is unchanged. `gke-dev` does not set the endpoint.
 
 Spans cover `/api/products` (and `/version`). Probes and `/metrics` are not traced.
 
