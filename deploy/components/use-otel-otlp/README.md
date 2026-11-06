@@ -2,7 +2,7 @@
 
 Turns tracing **on** for **frontend**, **product-catalog**, **balancereader**, **transactionhistory**, **ledgerwriter**, **contacts**, and **userservice**, pointing at the platform OpenTelemetry Collector over **OTLP HTTP**.
 
-Python services (`frontend`, `contacts`, `userservice`) and Java services (`balancereader`, `transactionhistory`, `ledgerwriter`) also export application logs on that same endpoint. The collector logs pipeline stores them in Loki. The Go service is still traces only.
+Python services (`frontend`, `contacts`, `userservice`), Java services (`balancereader`, `transactionhistory`, `ledgerwriter`), and `product-catalog` also export application logs on that same endpoint. The collector logs pipeline stores them in Loki.
 
 `disable-gcp-telemetry` sets `ENABLE_TRACING=false` (no legacy GCP trace push on local overlays). This component runs **after** that and sets `ENABLE_TRACING=true` plus `OTEL_EXPORTER_OTLP_ENDPOINT`.
 

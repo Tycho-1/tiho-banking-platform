@@ -41,6 +41,8 @@ func main() {
 		verifier: verifier,
 	}
 
+	shutdownLogs := initLogs()
+	defer shutdownLogs()
 	shutdownTracer := initTracer()
 	defer shutdownTracer()
 

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,6 +18,20 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 )
+
+func TestInitLogsLeavesStdoutWhenEndpointUnset(t *testing.T) {
+	t.Setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "")
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	shutdown := initLogs()
+	t.Cleanup(shutdown)
+	log.Printf("catalog stdout")
+	if !strings.Contains(buf.String(), "catalog stdout") {
+		t.Fatalf("stdout log missing: %q", buf.String())
+	}
+}
 
 func TestCatalogListFiltersByType(t *testing.T) {
 	catalog := &catalog{

@@ -42,7 +42,7 @@ images:
     newName: ghcr.io/tycho-1/tiho-banking-platform/loadgenerator
     newTag: v0.6.9
   - name: ghcr.io/tycho-1/tiho-banking-platform/product-catalog
-    newTag: v0.1.2
+    newTag: v0.1.3
 
 patches:
   - path: patch-frontend-version.yaml
