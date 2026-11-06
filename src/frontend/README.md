@@ -63,7 +63,7 @@ Implemented in Python with Flask.
 Tracing (optional):
 
 - `ENABLE_TRACING` — `true` to export spans
-- `OTEL_EXPORTER_OTLP_ENDPOINT` — if set, export **OTLP** to the Collector (Kind). If unset, export **Cloud Trace** (GKE)
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — if set, export **OTLP** traces and application logs to the Collector (Kind). If unset, export **Cloud Trace** (GKE) and leave logs on stdout
 - `OTEL_SERVICE_NAME` — span resource `service.name` (default `frontend`)
 - `OTEL_EXPORTER_OTLP_PROTOCOL` — `http/protobuf` on Kind
 

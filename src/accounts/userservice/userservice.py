@@ -35,6 +35,10 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.propagate import set_global_textmap
 from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
+from opentelemetry._logs import set_logger_provider
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.propagators.composite import CompositePropagator
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
@@ -44,6 +48,26 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from db import UserDb
 from metrics import init_metrics
+
+
+def _setup_otlp_logs(app, service_name):
+    """Send application logs to the Collector over OTLP. Stdout logging stays."""
+    log_provider = LoggerProvider(
+        resource=Resource.create({'service.name': service_name})
+    )
+    set_logger_provider(log_provider)
+    log_provider.add_log_record_processor(
+        BatchLogRecordProcessor(OTLPLogExporter())
+    )
+    app.logger.addHandler(
+        LoggingHandler(level=logging.INFO, logger_provider=log_provider)
+    )
+    app.logger.info(
+        'OTLP logs enabled endpoint=%s service=%s',
+        os.environ.get('OTEL_EXPORTER_OTLP_ENDPOINT', '').strip(),
+        service_name,
+    )
+    return log_provider
 
 
 def _setup_tracing(app):
@@ -70,6 +94,7 @@ def _setup_tracing(app):
             TraceContextTextMapPropagator(),
             W3CBaggagePropagator(),
         ]))
+        _setup_otlp_logs(app, service_name)
     else:
         app.logger.info('✅ Tracing enabled (Cloud Trace).')
         exporter = CloudTraceSpanExporter()

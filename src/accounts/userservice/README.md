@@ -43,4 +43,4 @@ Implemented in Python with Flask.
 - [deployment/userservice](../../../deploy/base/userservice.yaml)
 - [service/userservice](../../../deploy/base/userservice.yaml)
 - Prometheus scrape: [ServiceMonitor](../../../deploy/components/prometheus-servicemonitors/servicemonitor-userservice.yaml) (`/metrics`). Works on any cluster with Prometheus Operator. **`gke-dev`** does not include that component (Cloud Ops instead).
-- Kind traces: [OTLP patch](../../../deploy/components/use-otel-otlp/patch-userservice.yaml) to the platform Collector. `gke-dev` keeps Cloud Trace.
+- Kind traces and application logs: [OTLP patch](../../../deploy/components/use-otel-otlp/patch-userservice.yaml) to the platform Collector. `gke-dev` keeps Cloud Trace and stdout logs.

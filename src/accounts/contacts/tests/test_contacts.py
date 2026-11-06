@@ -24,7 +24,9 @@ from unittest.mock import patch, mock_open
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from contacts.contacts import create_app
+from opentelemetry.sdk._logs import LoggingHandler
+
+from contacts.contacts import _setup_otlp_logs, create_app
 from contacts.tests.constants import (
     EXAMPLE_CONTACT,
     EXAMPLE_USER,
@@ -83,6 +85,20 @@ class TestContacts(unittest.TestCase):
         response = self.test_app.get("/metrics")
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"contacts_http_requests_total", response.data)
+
+    def test_otlp_logs_handler_attached(self):
+        """OTLP log export attaches beside the existing stdout handlers."""
+        with patch("contacts.contacts.OTLPLogExporter"):
+            provider = _setup_otlp_logs(self.flask_app, "contacts")
+        try:
+            self.assertTrue(
+                any(
+                    isinstance(handler, LoggingHandler)
+                    for handler in self.flask_app.logger.handlers
+                )
+            )
+        finally:
+            provider.shutdown()
 
     def test_version_endpoint_returns_200_status_code_correct_version(self):
         """test if correct version is returned"""
