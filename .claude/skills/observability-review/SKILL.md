@@ -21,7 +21,7 @@ Run **after** user confirms Grafana metrics and/or Jaeger traces look OK.
    - Logs dashboard counts the Promtail stream (`namespace="banking-platform"`), not the OTel copy.
 
 4. **Open PRD**
-   - [002](../../../prds/002-grafana-dashboards.md) is the draft for loading dashboards through the sidecar. Do not treat a hand import as that PRD being done.
+   - [002](../../../prds/002-grafana-dashboards.md) is the draft for Flux applying the three dashboards. A hand import does not close it.
    - 001 and 003 are done. Do not reopen them.
 
 5. Output:

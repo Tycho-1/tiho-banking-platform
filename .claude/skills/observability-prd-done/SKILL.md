@@ -10,7 +10,7 @@ description: Close an observability PRD — verify acceptance checklist and set 
 
 2. Run `bash scripts/agent/observability-verify.sh`.
 
-3. Walk that PRD's **Acceptance** checkboxes. Mark `[x]` only with evidence for that item. Grafana, Jaeger, or Loki counts only when the PRD asks for it. Do not close 001 or 003 again. 002 is done only when the sidecar loads the three dashboards without a hand import.
+3. Walk that PRD's **Acceptance** checkboxes. Mark `[x]` only with evidence for that item. Grafana, Jaeger, or Loki counts only when the PRD asks for it. Do not close 001 or 003 again. 002 is done only when Flux has applied the three dashboards and Grafana shows them without a hand import.
 
 4. Set `**Status:** done` at top.
 

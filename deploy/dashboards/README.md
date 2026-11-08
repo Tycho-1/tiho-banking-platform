@@ -4,7 +4,7 @@
 
 Import it by hand: **Dashboards → New → Import → Upload dashboard JSON**, then choose the Prometheus datasource that scrapes the Kind ServiceMonitors. Nothing in the Kustomize tree loads this file.
 
-TODO: load these files through the Kind Grafana sidecar. See [PRD 002](../../prds/002-grafana-dashboards.md). The sidecar watches namespace `observability` only, so a ConfigMap in the `kind-local` overlay (`banking-platform`) does not reach Grafana.
+TODO: Flux should apply these files. See [PRD 002](../../prds/002-grafana-dashboards.md). The GitOps path is `flux-fleet` `infrastructure/observability/dashboards/` (namespace `observability`). A ConfigMap in the `kind-local` overlay stays in `banking-platform` and Grafana does not load it.
 
 ## Services
 
