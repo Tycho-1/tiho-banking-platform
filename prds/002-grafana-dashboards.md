@@ -6,17 +6,17 @@ The three dashboard JSON files exist and work when imported by hand. Nothing in 
 
 ## Problem
 
-`deploy/dashboards/` holds `banking-platform-metrics.json`, `banking-platform-traces.json`, and `banking-platform-logs.json`. Grafana loads them only after **Dashboards → Import**. The Kind sidecar does not watch this repo.
+`deploy/dashboards/` holds `banking-platform-metrics.json`, `banking-platform-traces.json`, and `banking-platform-logs.json`. Grafana loads them only after **Dashboards → Import**. Flux does not apply these files today.
 
-The sidecar in `tiho-local-kind-cluster` (`kind-cluster/observability/kube-prometheus-stack-values.yaml`) has `grafana.sidecar.dashboards.searchNamespace: observability`. It loads ConfigMaps labeled `grafana_dashboard: "1"` in that namespace. The pattern already used by the platform is `kind-cluster/observability/dashboards/kustomization.yaml` (`configMapGenerator`, `namespace: observability`).
+GitOps path: Flux already reconciles `flux-fleet` `infrastructure/observability/dashboards/`. That kustomization builds a ConfigMap in namespace `observability` with label `grafana_dashboard: "1"`. Grafana does not read Git. A container in the Grafana pod (the chart's dashboard sidecar, not the Istio sidecar) watches that namespace and loads the JSON. Flux applies the ConfigMap. The container picks it up.
 
-`deploy/overlays/kind-local` sets `namespace: banking-platform`. A ConfigMap added there stays in `banking-platform` and the sidecar never sees it.
+`deploy/overlays/kind-local` sets `namespace: banking-platform`. A ConfigMap added there stays in `banking-platform` and Grafana never sees it. Do not use `task apply_grafana_dashboards` for this. That task is a one-off apply in the Kind lab repo, not this cluster's GitOps.
 
 ## Scope
 
 - The three existing JSON files. Same panels, same dashboard uids (`banking-platform-metrics`, `banking-platform-traces`, `banking-platform-logs`).
-- Kind only. Provision them the same way as the other Kind dashboards: ConfigMap in `observability`, label `grafana_dashboard: "1"`.
-- Datasource UIDs must be real before the sidecar loads the file. Hand import fills `${DS_PROMETHEUS}` and `${DS_LOKI}` through Grafana's `__inputs` block. The sidecar does not. Use the Kind datasources that already point at this Prometheus and this Loki: `webstore-metrics` and `webstore-logs`.
+- Kind only. Flux applies them from `flux-fleet` `infrastructure/observability/dashboards/`: ConfigMap in `observability`, label `grafana_dashboard: "1"`.
+- Datasource UIDs must be real in the JSON. Hand import fills `${DS_PROMETHEUS}` and `${DS_LOKI}` through Grafana's `__inputs` block. A ConfigMap load does not. Use the Kind datasources that already point at this Prometheus and this Loki: `webstore-metrics` and `webstore-logs`.
 
 ## Out of scope
 
@@ -27,7 +27,7 @@ The sidecar in `tiho-local-kind-cluster` (`kind-cluster/observability/kube-prome
 
 ## Acceptance
 
-- [ ] The three JSON files are inputs to a `configMapGenerator` in the Kind observability dashboards kustomization (`namespace: observability`, label `grafana_dashboard: "1"`)
+- [ ] The three JSON files are inputs to the Flux dashboards kustomization `flux-fleet/infrastructure/observability/dashboards/` (`namespace: observability`, label `grafana_dashboard: "1"`)
 - [ ] `__inputs` and `${DS_PROMETHEUS}` / `${DS_LOKI}` are replaced with `webstore-metrics` and `webstore-logs`
 - [ ] `kind-local` does not gain a ConfigMap in `banking-platform` for this
 - [ ] `gke-dev` is unchanged
@@ -37,7 +37,7 @@ The sidecar in `tiho-local-kind-cluster` (`kind-cluster/observability/kube-prome
 
 ## Tasks
 
-- [ ] Copy or generate the three dashboards into `tiho-local-kind-cluster/kind-cluster/observability/dashboards/` and register them in that `kustomization.yaml` (`disableNameSuffixHash: true`, same as the existing entries)
-- [ ] Rewrite datasource references for sidecar provisioning
-- [ ] Apply with the platform task (`task apply_grafana_dashboards`) or server-side apply if the JSON is too large for a client-side apply annotation
-- [ ] Confirm the three uids in Grafana. The provisioned object replaces the hand-imported one with the same uid
+- [ ] Add the three dashboards to `flux-fleet/infrastructure/observability/dashboards/` and register them on the `configMapGenerator` (`disableNameSuffixHash: true`)
+- [ ] Rewrite datasource references so the JSON does not depend on the import dialog
+- [ ] Let Flux reconcile. Do not `kubectl apply` or `task apply_grafana_dashboards` as the way to keep them
+- [ ] Confirm the three uids in Grafana. The Flux-loaded object replaces the hand-imported one with the same uid

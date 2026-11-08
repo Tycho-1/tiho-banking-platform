@@ -32,7 +32,7 @@ Upstream BoA assumes GCP Cloud Ops. Kind turns that off (`disable-gcp-telemetry`
 - [ ] **Alerts** — scrape down, HTTP 5xx, p95. No `PrometheusRule` yet.
 - [ ] **Ledger business counter** — accepted / rejected / duplicate. HTTP status hides that.
 - [ ] **Go log trace ids** — Python and Java OTLP logs can carry the trace id. `product-catalog` `log.Printf` does not.
-- [ ] **Dashboard GitOps** — [PRD 002](../prds/002-grafana-dashboards.md). Sidecar in namespace `observability`, not a ConfigMap inside `kind-local`.
+- [ ] **Dashboard GitOps** — [PRD 002](../prds/002-grafana-dashboards.md). Flux applies the JSON from `flux-fleet` into namespace `observability`, not from `kind-local`.
 - [ ] Optional: **Istio/ambient telemetry** in the same Grafana story.
 
 ## Public Kind / platform reference (**important**)

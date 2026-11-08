@@ -80,7 +80,7 @@ Guide: [docs/agent-observability.md](docs/agent-observability.md)
 
 ## PRDs
 
-`prds/*.md`. [001](prds/001-microservices-prom-otel.md) is the closed Kind baseline (Prometheus scrape, OTLP traces, OTLP logs for the seven app services). There is not one PRD per service. [002](prds/002-grafana-dashboards.md) is the open draft: load the three dashboards through the Kind Grafana sidecar. [003](prds/003-product-catalog.md) is done: the product-catalog service, the Save & invest page, and the Kind deploy. Other follow-ups are not files yet: alerts, a ledger result counter, Go log trace ids.
+`prds/*.md`. [001](prds/001-microservices-prom-otel.md) is the closed Kind baseline (Prometheus scrape, OTLP traces, OTLP logs for the seven app services). There is not one PRD per service. [002](prds/002-grafana-dashboards.md) is the open draft: Flux applies the three dashboards from `flux-fleet` into namespace `observability`. [003](prds/003-product-catalog.md) is done: the product-catalog service, the Save & invest page, and the Kind deploy. Other follow-ups are not files yet: alerts, a ledger result counter, Go log trace ids.
 
 ---
 
