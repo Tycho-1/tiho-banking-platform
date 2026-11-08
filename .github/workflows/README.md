@@ -22,17 +22,17 @@ version: "0.6.10"
 Publish jobs read **`$SERVICE_PATH/release.yaml`** → `version` and tag:
 
 ```text
-ghcr.io/<owner>/<repo>/<service>:v0.6.10   # from that service’s release.yaml
+ghcr.io/<owner>/<repo>/<service>:v0.6.10   # v + the version in the example above
 ghcr.io/<owner>/<repo>/<service>:<git-sha> # immutable build id
 ```
 
-No root version file and no `:latest` tag. Services can diverge (frontend `0.6.10`, userservice `0.6.9`). Add more keys to `release.yaml` later if needed — keep **one** file, don’t add sibling `VERSION`/`OWNER` files.
+No root version file and no `:latest` tag. Services diverge on purpose. Current pins are in `deploy/components/use-ghcr-images/kustomization.yaml`. Add more keys to `release.yaml` later if needed — keep **one** file, don’t add sibling `VERSION`/`OWNER` files.
 
 **Release one service**
 
 1. Bump `version` in `src/<service>/release.yaml`.
 2. Commit with your code change; push to `main` (`ENABLE_IMAGE_PUSH=true`).
-3. Pin that service in GitOps (`use-ghcr-images` or overlay `images:`) to `v0.6.10`.
+3. Pin that same version in GitOps (`use-ghcr-images` `newTag`, and the overlay `images:` entry). Current pins are in `deploy/components/use-ghcr-images/kustomization.yaml`.
 
 Upstream BoA images remain `v0.6.9` until you opt into GHCR for a given service.
 

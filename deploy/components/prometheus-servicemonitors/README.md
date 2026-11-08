@@ -8,6 +8,7 @@ Tells **Prometheus Operator** to scrape app metrics. Kubernetes pattern: Service
 
 | Service | Path |
 |---------|------|
+| frontend | `/metrics` |
 | product-catalog | `/metrics` |
 | balancereader | `/actuator/prometheus` (Spring Actuator) |
 | transactionhistory | `/actuator/prometheus` (Spring Actuator) |
