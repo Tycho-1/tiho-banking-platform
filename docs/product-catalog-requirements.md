@@ -2,13 +2,11 @@
 
 Requirements summary for a new **Go** microservice that extends Tiho Banking Platform with a retail **products / offerings** page (savings, investments, and related bank products).
 
-**Status:** implemented (v1) — Go service + frontend `/products` page. **Not committed yet.**
+**Status:** done on `main`. Go service, frontend `/products`, GHCR image, and Kind deploy. Closed as [PRD 003](../prds/003-product-catalog.md).
 
-**Versions (this change):** frontend `v0.6.11` · product-catalog `v0.1.1`
+**Current image pin:** product-catalog `v0.1.3` in `deploy/components/use-ghcr-images/kustomization.yaml`. Frontend has moved on since this service shipped. Read that file for the live tag, not a number in this doc.
 
-**Verified so far:** `go test ./...` · local `curl` with JWT · `kubectl kustomize` on overlays. **Not yet:** browser UI · full Kind deploy with new images.
-
-**Origin:** discussed in agent session (Jul 2026); see repo git history when committed.
+**Observability:** Kind scrape, OTLP traces, and OTLP logs are in [PRD 001](../prds/001-microservices-prom-otel.md).
 
 ---
 
@@ -262,7 +260,7 @@ Each overlay that runs the full app must include the new Deployment and image pi
 
 - `deploy/overlays/kind-local/` — image pin + inherits on ambient overlays
 - `deploy/overlays/gke-dev/`
-- `deploy/components/use-ghcr-images/` — frontend `v0.6.11`, product-catalog `v0.1.1`
+- `deploy/components/use-ghcr-images/` — current `newTag` for product-catalog (now `v0.1.3`)
 
 ### 8.4 Container image
 
@@ -390,14 +388,12 @@ Browser
 - [x] `kubectl kustomize deploy/overlays/kind-local-ambient-cnpg` (and ESO overlay) builds
 - [x] `disable-gcp-telemetry` patch for `product-catalog`
 - [x] **No changes** to userservice, contacts, or ledger services
-- [x] frontend `release.yaml` bumped to **0.6.11**; `use-ghcr-images` updated
+- [x] `release.yaml` and `use-ghcr-images` pin the product-catalog image
 
-### Still to verify before calling v1 “done”
+### Kind proof
 
-- [ ] Dockerfile produces a runnable image (CI or local `docker build`)
-- [ ] `/products` in browser (frontend local or Kind)
-- [ ] Kind deploy: login → **Save & invest** → products visible
-- [ ] GHCR push: `frontend:v0.6.11` + `product-catalog:v0.1.1` after commit + push
+- [x] Image published to GHCR and pinned for Kind
+- [x] `/products` in the Kind UI: login → **Save & invest** → products visible
 
 ---
 
@@ -407,14 +403,14 @@ Browser
 - Postgres table + CNPG for editable product catalog
 - Admin API or GitOps-managed ConfigMap for product data
 - Loan and card product types
-- OpenTelemetry traces (align with platform observability)
+- ~~OpenTelemetry traces~~ — done on Kind with the other app services ([PRD 001](../prds/001-microservices-prom-otel.md)), including OTLP logs
 - Flux GitOps wiring in `tiho-local-kind-cluster`
 
 ---
 
 ## 15. Implementation references (for agents)
 
-Use this section when implementing v1. Read the requirements above first; use these repo paths as concrete patterns.
+Patterns this service was built from. v1 is already on `main`.
 
 ### 15.1 Copy patterns from
 
@@ -438,18 +434,7 @@ From `contacts` Deployment:
 
 ### 15.3 Container image (no upstream image exists)
 
-Unlike frontend/contacts, **Google does not publish a `product-catalog` image**. For v1:
-
-1. Add `src/products/Dockerfile` and build locally or via CI.
-2. Add to each overlay `images:` block, e.g.:
-
-```yaml
-  - name: ghcr.io/<owner>/tiho-banking-platform/product-catalog
-    newTag: v0.1.1
-```
-
-3. In `deploy/base/product-catalog.yaml`, set `image:` to that name (tag overridden by Kustomize).
-4. Until `ENABLE_IMAGE_PUSH` is on, build/push manually or use `imagePullPolicy: Never` + `kind load docker-image` for local Kind testing.
+Google does not publish a `product-catalog` image. This repo builds it and pins `newTag` in `deploy/components/use-ghcr-images/kustomization.yaml` (currently `v0.1.3`). `kind-local` and `gke-dev` pin the same tag. CI publishes when `ENABLE_IMAGE_PUSH=true`.
 
 ### 15.4 Telemetry component
 

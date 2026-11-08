@@ -1,0 +1,36 @@
+---
+description: Observability agent workflow for Tiho Banking Platform — Prom, OTel, Flux, Grafana.
+alwaysApply: true
+---
+
+# Banking platform — observability (Cursor)
+
+Read [AGENTS.md](../AGENTS.md) for paths and reference services.
+
+The seven app services already have Prometheus scrape, OTLP traces, and OTLP logs on `kind-local`. New work is a new slice on that baseline.
+
+## YOU MUST
+
+- **Define done first** — user states service + signal + overlay before large edits
+- Copy **reference service** (balancereader for Java, frontend for Python, product-catalog for Go), including logs when adding OTLP
+- **`kind-local` only** for ServiceMonitor + OTLP unless user explicitly targets another overlay
+- **Do not** enable `prometheus-servicemonitors` or `use-otel-otlp` on `gke-dev` without user approval (Cloud Ops)
+- Run **`observability-verify`** before saying work is complete
+- **Runtime proof:** remind the user to check Grafana, Jaeger, and Loki after Flux deploy. A diff is not proof
+- Bump **`release.yaml`** and **`newTag`** in `use-ghcr-images` and the overlay when the image changes. `gke-dev` gets the tag only
+
+## Skills
+
+| Skill | Use |
+|-------|-----|
+| `observability-add-prom` | Metrics + ServiceMonitor |
+| `observability-add-otel` | OTLP patches |
+| `observability-verify` | Pre-commit |
+| `observability-review` | Post-Grafana/Jaeger coverage |
+| `observability-prd-create` / `observability-prd-done` | Multi-service rollouts |
+
+## ServiceMonitor checklist
+
+- `metadata.labels.release: kube-prometheus-stack` (or cluster’s Prometheus release)
+- `spec.selector.matchLabels.app` matches Service
+- Path: `/metrics` (Go/Python) or `/actuator/prometheus` (Java)

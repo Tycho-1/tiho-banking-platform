@@ -51,9 +51,6 @@ hs_err_pid*
 # Node (if any tooling appears)
 node_modules/
 
-# Cursor / local agent
-.cursor/
-
 # Logs & temp
 *.log
 tmp/

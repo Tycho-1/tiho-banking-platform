@@ -9,7 +9,7 @@
 - [x] **External Secrets + Vault** — components `use-eso-vault` / `use-eso-vault-cnpg`; overlays `kind-local-eso` and `kind-local-ambient-cnpg-eso`. App ships ExternalSecrets only; platform owns `SecretStore` (`vault-banking-platform`) + Vault KV paths.
 - [x] **Deploy CI** — `deploy-validate` kustomize-builds all overlays (including ESO); `checkout@v5` / `setup-kubectl@v5`.
 - [x] **Public app repo** — banking app on GitHub with `src/`, `deploy/`, workflows, docs.
-- [ ] **Product catalog v1** — Go `product-catalog` + frontend `/products` (local API tested; Kind/browser pending) — [product-catalog-requirements.md](product-catalog-requirements.md)
+- [x] **Product catalog v1** — Go `product-catalog` + frontend `/products` on Kind. PRD: [prds/003-product-catalog.md](../prds/003-product-catalog.md). Spec: [product-catalog-requirements.md](product-catalog-requirements.md)
 
 ## README & docs
 
@@ -23,14 +23,17 @@
 - [ ] **Gateway API without Istio** — install a non-Istio controller on Kind (e.g. Envoy Gateway); set `gatewayClassName` accordingly; optional: drop `istio-injection` on that overlay.
 - [ ] **Do not** make Helm the primary deploy path — Kustomize stays source of truth. Optional thin Helm wrapper only if a real consumer asks for `helm install`.
 
-## Observability (**hard / high value**)
+## Observability
 
-Upstream BoA assumes GCP Cloud Ops (`ENABLE_METRICS` / `ENABLE_TRACING`). On Kind you currently disable GCP telemetry. Replacing that properly is non-trivial (app wiring + platform stack + dashboards).
+Upstream BoA assumes GCP Cloud Ops. Kind turns that off (`disable-gcp-telemetry`) and uses Prometheus scrape plus OTLP. `gke-dev` stays on Cloud Ops.
 
-- [ ] **OpenTelemetry** — export traces/metrics/logs from services to an OTEL Collector (replace or complement GCP exporters); document env/flags per language (Python / Java / frontend).
-- [ ] **Prometheus stack (ref)** — platform installs Prometheus (+ Grafana, Alertmanager as needed); app exposes scrape targets / ServiceMonitors (or OTEL→Prometheus bridge). Prefer **platform-owned** stack; app repo only adds scrape/instrumentation hooks + optional overlay notes.
-- [ ] Optional: **Istio/ambient telemetry** into the same backend (mesh metrics + app OTEL) so one Grafana story covers both.
-- [ ] Docs: Kind prerequisites + how to open Grafana / find BoA dashboards; keep Cloud Ops path for `gke-dev` if useful.
+- [x] **Seven app services on Kind** — Prometheus ServiceMonitors, OTLP traces, and OTLP logs (`frontend`, `contacts`, `userservice`, `balancereader`, `transactionhistory`, `ledgerwriter`, `product-catalog`). Metrics stay a scrape, not an OTLP metrics export. Agent map: [agent-observability.md](agent-observability.md).
+- [x] **Dashboards** — hand-imported JSON in `deploy/dashboards/` (metrics, trace rates, pod logs). Jaeger remains the waterfall.
+- [ ] **Alerts** — scrape down, HTTP 5xx, p95. No `PrometheusRule` yet.
+- [ ] **Ledger business counter** — accepted / rejected / duplicate. HTTP status hides that.
+- [ ] **Go log trace ids** — Python and Java OTLP logs can carry the trace id. `product-catalog` `log.Printf` does not.
+- [ ] **Dashboard GitOps** — [PRD 002](../prds/002-grafana-dashboards.md). Sidecar in namespace `observability`, not a ConfigMap inside `kind-local`.
+- [ ] Optional: **Istio/ambient telemetry** in the same Grafana story.
 
 ## Public Kind / platform reference (**important**)
 

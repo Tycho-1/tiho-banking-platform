@@ -6,13 +6,7 @@ Optional Kustomize component. Remaps upstream BoA image names to this repo’s *
 
 ## What it does
 
-Rewrites each service image to this repo’s GHCR path. **Tags are per-service** (from each `src/.../release.yaml`):
-
-```text
-frontend        → ghcr.io/tycho-1/tiho-banking-platform/frontend:v0.6.10
-userservice     → …/userservice:v0.6.9
-…
-```
+Rewrites each service image to this repo’s GHCR path. **Tags are per-service** (from each `src/.../release.yaml`). The live pins are the `newTag` values in [`kustomization.yaml`](kustomization.yaml), not an example in this README.
 
 Only remap services you have actually published to GHCR when adding this component to **other** overlays. On **`kind-local`**, all nine app images are expected on GHCR after CI.
 
@@ -50,7 +44,7 @@ Frontend-only smoke test without remapping everything:
 images:
   - name: us-central1-docker.pkg.dev/bank-of-anthos-ci/bank-of-anthos/frontend
     newName: ghcr.io/tycho-1/tiho-banking-platform/frontend
-    newTag: v0.6.10
+    newTag: v0.6.14
 ```
 
 ## CNPG note

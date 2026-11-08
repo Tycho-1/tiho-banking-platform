@@ -8,6 +8,7 @@
 | [product-catalog-requirements.md](product-catalog-requirements.md) | Product-catalog (Go) — design spec, acceptance criteria, v1 scope |
 | [upstream.md](upstream.md) | Bank of Anthos attribution, version pin, how to sync `src/` |
 | [TODO.md](TODO.md) | Done + follow-ups (OTEL/Prometheus, Flux, public platform repo, …) |
+| [agent-observability.md](agent-observability.md) | Cursor and Claude skills, hooks, and PRDs |
 
 Deploy detail (all overlays): **[deploy/README.md](../deploy/README.md)**.
 
